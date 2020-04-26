@@ -2,9 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package emujava;
-
-import emujava.*;
+package extend;
 
 import java.io.*;
 import java.util.*;
@@ -214,7 +212,7 @@ public class EMController {
                 new File("C:\\Users\\compi\\OneDrive\\Desktop\\Dev\\FizzBuzz.java")
         );
         ArrayList<Token> class1Tokens;
-        MySourceCode sourceCode = new MySourceCode();
+        SourceCode sourceCode = new SourceCode();
         EMProjectManager projectManager = new EMProjectManager();
         ClassicSourceCode classicSourceCode = new ClassicSourceCode();
         class1Tokens = scan.getTokenList();
