@@ -15,7 +15,7 @@ import java.util.*;
  */
 
 public class ClassComponents {
-
+    
     private ArrayList importsList;
     private ArrayList classHeader;
     private String className;
@@ -23,54 +23,54 @@ public class ClassComponents {
     private ArrayList<Token> dmList;
     private ArrayList<MemberMethod> mmList;
     private ArrayList<ClassConstructor> ccList;
-
+    
     public ClassComponents() {
         dmList = new ArrayList<Token>();
         mmList = new ArrayList<MemberMethod>();
         ccList = new ArrayList<ClassConstructor>();
     } //END ClassComponents() CONSTRUCTOR
-
+    
     public void setImportsList(ArrayList iList) {
         importsList = iList;
     } //END setImportsList() METHOD
-
-
+    
+    
     public void setClassHeader(ArrayList cHeader) {
         classHeader = cHeader;
     } //END setClassHeader() METHOD
-
-
+    
+    
     public void setClassName(String cName) {
         className = cName;
     } //END setClassName() METHOD
-
-
+    
+    
     public void setClassParent(String pName) {
         classParent = pName;
     } //END setClassParent() METHOD
-
-
+    
+    
     public void extractClassComponents(ArrayList tokenList, int tokenNum) {
-
+        
         for (; tokenNum < tokenList.size(); tokenNum++) {
             ArrayList<Token> tempList = new ArrayList<Token>();
             Token token = (Token) tokenList.get(tokenNum);
-
+            
             if (token.getToken().equals("public") || token.getToken().equals("private") || token.getToken().equals("protected") || token.getToken().equals("static") || token.getToken().equals("final")) {
                 tempList.add(token);
                 token = (Token) tokenList.get(++tokenNum);
             } //END if STATEMENT
-
+            
             if (token.getToken().equals("public") || token.getToken().equals("private") || token.getToken().equals("protected") || token.getToken().equals("static") || token.getToken().equals("final")) {
                 tempList.add(token);
                 token = (Token) tokenList.get(++tokenNum);
             } //END if STATEMENT
-
+            
             if (token.getToken().equals("static") || token.getToken().equals("public") || token.getToken().equals("private") || token.getToken().equals("protected") || token.getToken().equals("final")) {
                 tempList.add(token);
                 token = (Token) tokenList.get(++tokenNum);
             } //END if STATEMENT
-
+            
             if (token.getToken().equals("abstract")) {
                 do {
                     token = (Token) tokenList.get(++tokenNum);
@@ -78,7 +78,7 @@ public class ClassComponents {
                 token = null;
                 continue;
             } //END if STATEMENT
-
+            
             if (token != null && token.getToken().equals("void")) {
                 tempList.add(token);
                 MemberMethod mMethod = new MemberMethod();
@@ -104,7 +104,7 @@ public class ClassComponents {
                 token = null;
                 continue;
             } //END if STATEMENT
-
+            
             if (token != null && token.getDescription().equals("Data Type")) {
                 tempList.add(token);
                 token = (Token) tokenList.get(++tokenNum);
@@ -159,7 +159,7 @@ public class ClassComponents {
                     } while (!token.getToken().equals(";"));
                 } //END if-else STATEMENT
             } //END if STATEMENT
-
+            
             if (token != null && token.getDescription().equals("Identifier")) {
                 tempList.add(token);
                 token = (Token) tokenList.get(++tokenNum);
@@ -204,10 +204,11 @@ public class ClassComponents {
                             if (token.getToken().equals("{")) {
                                 mList.add(token);
                             } else if (token.getToken().equals("}")) {
-                                mList.remove(mList.size() - 1);
+//                                mList.remove(mList.size() - 1);
                                 if (mList.size() == 0) {
                                     break DOWHILE;
                                 } //END if STATEMENT
+                                mList.remove(mList.size() - 1);
                             } //END if STATEMENT
                         } while (tokenNum < tokenList.size());
                         mmList.add(mMethod);
@@ -220,55 +221,53 @@ public class ClassComponents {
                         tempList.clear();
                     } else {
                         tempList.add(token);
-                        for (int f1 = 0; f1 < tempList.size(); f1++) {
-                            dmList.add(tempList.get(f1));
-                        } //END for LOOP
+                        //END for LOOP
+                        dmList.addAll(tempList);
                         tempList.clear();
                         do {
                             token = (Token) tokenList.get(++tokenNum);
                             dmList.add(token);
-                        } while (!token.getToken().equals(";"));
+                        } while (!token.getToken().equals(";") && tokenNum + 1 < tokenList.size());
                     } //END if-else STATEMENT
                 } else if (token.getToken().equals(";")) {
                     tempList.add(token);
-                    for (int f1 = 0; f1 < tempList.size(); f1++) {
-                        dmList.add(tempList.get(f1));
-                    } //END for LOOP
+                    //END for LOOP
+                    dmList.addAll(tempList);
                     tempList.clear();
                 } //END if-else STATEMENT
             } //END if STATEMENT
         } //END for LOOP
-
+        
     } //END extractClassComponents() METHOD
-
+    
     public ArrayList<Token> getDMList() {
         return dmList;
     } //EDN getDMList() METHOD
-
+    
     public ArrayList<MemberMethod> getMMList() {
         return mmList;
     } //END getMemberMethodList() METHOD
-
+    
     public ArrayList<ClassConstructor> getCCList() {
         return ccList;
     } //END getClassConstructorList() METHOD
-
+    
     public String getClassName() {
         return className;
     } //END getClassName() METHOD
-
+    
     public String getClassParent() {
         return classParent;
     } //END getClassParent() METHOD
-
+    
     public ArrayList getImportsList() {
         return importsList;
     } //END getImportsList() METHOD
-
+    
     public ArrayList getClassHeader() {
         return classHeader;
     } //END getClassHeader() METHOD
-
+    
     public static void main(String[] args) {
         EMScanner.parentDirectory = "C:\\Users\\compi\\OneDrive\\Desktop\\Dev";
         EMScanner scan = new EMScanner(

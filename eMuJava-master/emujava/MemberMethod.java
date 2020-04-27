@@ -12,15 +12,15 @@ import java.util.*;
  */
 
 public class MemberMethod {
-
+    
     private ArrayList<Token> methodTokens;
     private ArrayList<Statement> statementsList;
-
+    
     public MemberMethod() {
         methodTokens = new ArrayList<Token>();
         statementsList = new ArrayList<Statement>();
     } //END MemberMethod() CONSTRUCTOR
-
+    
     public String getMethodHeader() {
         String header = "";
         int ct = 0;
@@ -44,7 +44,7 @@ public class MemberMethod {
         } while (ct < methodTokens.size());
         return header;
     } //END getMethodHeader() METHOD
-
+    
     public int getMethodHeaderCount() {
         int count = 0;
         DO1:
@@ -54,10 +54,10 @@ public class MemberMethod {
                 break DO1;
             } //END if STATEMENT
         } while (count < methodTokens.size());
-
+        
         return count;
     } //END getMethodHeaderCount() METHOD
-
+    
     public String getAnnotatedMethodHeader() {
         StringBuilder header = new StringBuilder();
         int ct = 0;
@@ -77,17 +77,16 @@ public class MemberMethod {
         } while (ct < methodTokens.size());
         return header.toString();
     } //END getAnnotatedMethodHeader() METHOD
-
+    
     public void identifyStatements() {
         int ct = 0;
-        ListIterator<Token> methodTokenIterator = methodTokens.listIterator();
         do {
             Token token = methodTokens.get(ct++);
             if (token.getToken().equals("{")) {
                 break;
             }
         } while (ct < methodTokens.size());
-
+        ct--;
         for (; ct < methodTokens.size() - 1; ct++) {
             Token token = (Token) methodTokens.get(ct);
             if (token.getToken().equals("if")) {
@@ -96,7 +95,7 @@ public class MemberMethod {
                     statement.addToken(token);
                     // Error here
                     token = (Token) methodTokens.get(++ct);
-                } while (!token.getToken().equals("{"));
+                } while (!token.getToken().equals("{") && ct + 1 < methodTokens.size());
                 ct--;
                 statement.setDescription("If Statement");
                 statementsList.add(statement);
@@ -143,7 +142,7 @@ public class MemberMethod {
                     statement.addToken(token);
                     token = (Token) methodTokens.get(++ct);
                     System.out.println("Token: " + token.getToken());
-                } while (!token.getToken().equals(";"));
+                } while (!token.getToken().equals(";") && ct + 1 < methodTokens.size());
                 statement.addToken(token);
                 if (statement.getStatementTokens().get(2).getToken().equals("new")) {
                     statement.setDescription("Object Creation");
@@ -181,7 +180,7 @@ public class MemberMethod {
             } //END if-else STATEMENT
         } //END for LOOP
     } //END identifyStatements() METHOD
-
+    
     public String getMethodName() {
         String methodName = "";
         for (int mt = 0; mt < methodTokens.size(); mt++) {
@@ -195,19 +194,19 @@ public class MemberMethod {
         } //END for LOOP
         return methodName;
     } //END getMethodName() METHOD
-
+    
     public void addToken(Token token) {
         methodTokens.add(token);
     } //END addToken() METHOD
-
+    
     public ArrayList<Token> getMethodTokens() {
         return methodTokens;
     } //END getMethodTokens() METHOD
-
+    
     public ArrayList<Statement> getStatementsList() {
         return statementsList;
     } //END getStatementsList() METHOD
-
+    
     public void printStatements() {
         for (Statement statement : statementsList) {
             System.out.println(statement.getDescription());
@@ -218,5 +217,5 @@ public class MemberMethod {
             System.out.println();
         } //END for LOOP
     } //END printStatements() METHOD
-
+    
 } //END MemberMethod CLASS
