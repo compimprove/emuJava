@@ -36,4 +36,4 @@ public class Account {
         return 0;
     } //END openAccount() METHOD
 
-} //EDN Account CLASS
+}; //EDN Account CLASS

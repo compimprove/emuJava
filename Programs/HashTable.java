@@ -93,6 +93,5 @@ public class HashTable {
     } //END clear() METHOD
     
     public void method6() {
-    } //END method1() METHOD
-    
-} //END HashTable CLASS
+    }
+}

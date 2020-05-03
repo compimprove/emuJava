@@ -14,7 +14,7 @@ import java.util.*;
  * @version 1.0 August 18, 2013
  */
 public class EMController {
-
+    
     private static EMController emController;
     private EMProjectManager projectManager = new EMProjectManager();
     private EMScanner emScanner = new EMScanner();
@@ -24,35 +24,35 @@ public class EMController {
     private MutationAnalysis mutationAnalysis = new MutationAnalysis();
     private TestCaseAnalysis testCaseAnalysis = new TestCaseAnalysis();
     private ClassicSourceCode classicSourceCode = new ClassicSourceCode();
-
+    
     private ArrayList<Token> class1Tokens, class2Tokens;
-
+    
     private EMController() {
     } //END EMController() CONSTRUCTOR
-
+    
     public static EMController create() {
         if (emController == null) {
             emController = new EMController();
         } //END if STATEMENT
         return emController;
     } //END create() METHOD
-
+    
     public void createNewProject() {
         projectManager.createNewProject();
     } //END createProject() METHOD
-
+    
     public EMProjectManager getProjectManager() {
         return projectManager;
     } //END getProjectManager() METHOD
-
+    
     public MutationAnalysis getMutationAnalysis() {
         return mutationAnalysis;
     } //END getMutationAnalysis() METHOD
-
+    
     public TestCaseAnalysis getTestCaseAnalysis() {
         return testCaseAnalysis;
     } //END TestCaseAnalysis() METHOD
-
+    
     public void startTheProcess() {
         ProcessProgress.getProcessProgress().setVisible(true);
         ProcessProgress.getProcessProgress().titleLabel.setText("Preprocessing the source code");
@@ -60,12 +60,12 @@ public class EMController {
         ProcessProgress.getProcessProgress().statusLabel.setText("Removing comnets from the code files...");
         ProcessProgress.getProcessProgress().ppBar.setValue(10);
         ProcessProgress.getProcessProgress().titleLabel.setText("Scanning the source code to identify tokens");
-
+        
         try {
             ProcessProgress.getProcessProgress().statusLabel.setText("Scanning " + EMConstants.CLASS_1);
             emScanner.scanFile(new File(EMConstants.PROJECT_LOCATION + EMConstants.PROJECT_NAME + "\\source\\" + EMConstants.CLASS_1));
             class1Tokens = emScanner.getTokenList();
-
+            
             if (!EMConstants.CLASS_2.equals("")) {
                 ProcessProgress.getProcessProgress().statusLabel.setText("Scanning " + EMConstants.CLASS_2);
                 emScanner.scanFile(new File(EMConstants.PROJECT_LOCATION + EMConstants.PROJECT_NAME + "\\source\\" + EMConstants.CLASS_2));
@@ -75,57 +75,57 @@ public class EMController {
         } catch (Exception e) {
             e.printStackTrace();
         } //END try-catch BLOCk
-
+        
         ProcessProgress.getProcessProgress()
                 .titleLabel
                 .setText("Extracting class components of " + EMConstants.CLASS_1);
-
+        
         c1Components = new ClassComponents();
         ClassHeader c1Header = new ClassHeader();
-
+        
         ProcessProgress.getProcessProgress()
                 .statusLabel
                 .setText("Extracting import list...");
-
+        
         ArrayList<Token> import1List = c1Header.extractImports(class1Tokens);
-
+        
         ProcessProgress.getProcessProgress().ppBar.setValue(20);
-
+        
         c1Components.setImportsList(import1List);
-
+        
         ProcessProgress.getProcessProgress().statusLabel.setText("Extracting class header...");
-
+        
         ArrayList<Token> class1Header = c1Header.extractHeader(class1Tokens);
-
+        
         ProcessProgress.getProcessProgress().ppBar.setValue(24);
-
+        
         c1Components.setClassHeader(class1Header);
         String class1Name = c1Header.getClassName(class1Header);
         c1Components.setClassName(class1Name);
         String class1Parent = c1Header.getClassParent(class1Header);
         c1Components.setClassParent(class1Parent);
         c1Components.extractClassComponents(class1Tokens, c1Header.getIndex() + 1);
-
+        
         ProcessProgress.getProcessProgress()
                 .statusLabel
                 .setText("Extracting class data members...");
-
+        
         ArrayList<MemberMethod> method1List = c1Components.getMMList();
-
+        
         ProcessProgress.getProcessProgress().ppBar.setValue(28);
         ProcessProgress.getProcessProgress()
                 .statusLabel
                 .setText("Extracting class constructors...");
         ProcessProgress.getProcessProgress().ppBar.setValue(32);
         ProcessProgress.getProcessProgress().statusLabel.setText("Extracting class methods...");
-
+        
         for (MemberMethod memberMethod : method1List) {
             memberMethod.identifyStatements();
             memberMethod.printStatements();
         } //END for LOOP
-
+        
         ProcessProgress.getProcessProgress().ppBar.setValue(40);
-
+        
         if (!EMConstants.CLASS_2.equals("")) {
             ProcessProgress.getProcessProgress().titleLabel.setText("Extracting class components of " + EMConstants.CLASS_2);
             c2Components = new ClassComponents();
@@ -152,46 +152,48 @@ public class EMController {
             } //END for LOOP
             ProcessProgress.getProcessProgress().ppBar.setValue(50);
         } //END if STATEMENT
-
+        
         ProcessProgress.getProcessProgress()
                 .titleLabel
                 .setText("Generating Mutants from class " + EMConstants.CLASS_1);
-
+        
         sourceCode.generateMutants(1);
-
+        
         if (!EMConstants.CLASS_2.equals("")) {
             ProcessProgress.getProcessProgress().titleLabel.setText("Generating Mutants from class " + EMConstants.CLASS_2);
             sourceCode.generateMutants(2);
         } //END if STATEMENT
-
+        
         ProcessProgress.getProcessProgress().ppBar.setValue(60);
-
+        
         ProcessProgress.getProcessProgress().titleLabel.setText("Instrumenting and Transforming the mutants");
         if (EMConstants.GEN_TYPE.contains("eMuJava") || EMConstants.GEN_TYPE.contains("Random")) {
             sourceCode.instrumentAndTransformCode();
         } else {
             classicSourceCode.instrumentAndTransformCode();
         } //END if-else STATEMENT
-
+        
         ProcessProgress.getProcessProgress().statusLabel.setText("Instrumentation and Transformation completed...");
         ProcessProgress.getProcessProgress().ppBar.setValue(80);
-
+        
         ProcessProgress.getProcessProgress().titleLabel.setText("Compiling original and mutated instrumented code");
         projectManager.compileProject();
         ProcessProgress.getProcessProgress().statusLabel.setText("Compilation completed successfully...");
         ProcessProgress.getProcessProgress().ppBar.setValue(100);
-
+        
         try {
             Thread.sleep(500);
         } catch (Exception e) {
             e.printStackTrace();
-        } //END try-catch BLOCK
-
+        }
+        
         ProcessProgress.getProcessProgress().setVisible(false);
         EMuJava.jButton1.setText("Generate Test Cases");
         EMController.create().getProjectManager().displayMutants();
-    } //END startTheProcess() METHOD
-
+        new EMConstants().print();
+        
+    }
+    
     public void generateTestCases() {
         EMuJava.jButton1.setEnabled(false);
         ProcessProgress.getProcessProgress().setVisible(true);
@@ -199,57 +201,62 @@ public class EMController {
         ProcessProgress.getProcessProgress().titleLabel.setText("Executing Genetic Algorithm");
         gaManager.start();
     } //END generateTestcases() METHOD
-
+    
     public ClassComponents getC1Components() {
         return c1Components;
     } //END getC!Components() METHOD
-
+    
+    public void setC1Components(ClassComponents classComponents) {
+        c1Components = classComponents;
+    }
+    
     public ClassComponents getC2Components() {
         return c2Components;
     } //END getC!Components() METHOD
-
+    
     public static void main(String[] args) {
         EMScanner.parentDirectory = "C:\\Users\\compi\\OneDrive\\Desktop\\Dev";
         EMScanner scan = new EMScanner(
                 new File("C:\\Users\\compi\\OneDrive\\Desktop\\Dev\\FizzBuzz.java")
         );
         ArrayList<Token> class1Tokens;
-        MySourceCode sourceCode = new MySourceCode();
+        SourceCode sourceCode = new SourceCode();
         EMProjectManager projectManager = new EMProjectManager();
         ClassicSourceCode classicSourceCode = new ClassicSourceCode();
         class1Tokens = scan.getTokenList();
-
+        
         ClassComponents c1Components = new ClassComponents();
         ClassHeader c1Header = new ClassHeader();
-
+        
         ArrayList<Token> import1List = c1Header.extractImports(class1Tokens);
-
+        
         c1Components.setImportsList(import1List);
-
+        
         ArrayList<Token> class1Header = c1Header.extractHeader(class1Tokens);
-
+        
         c1Components.setClassHeader(class1Header);
         String class1Name = c1Header.getClassName(class1Header);
         c1Components.setClassName(class1Name);
         String class1Parent = c1Header.getClassParent(class1Header);
         c1Components.setClassParent(class1Parent);
         c1Components.extractClassComponents(class1Tokens, c1Header.getIndex() + 1);
-
+        
         ArrayList<MemberMethod> method1List = c1Components.getMMList();
-
+        
         for (MemberMethod memberMethod : method1List) {
             memberMethod.identifyStatements();
             memberMethod.printStatements();
         } //END for LOOP
-
+        
         sourceCode.generateMutants(1);
-
-        if (EMConstants.GEN_TYPE.contains("eMuJava") || EMConstants.GEN_TYPE.contains("Random")) {
-            sourceCode.instrumentAndTransformCode();
-        } else {
-            classicSourceCode.instrumentAndTransformCode();
-        } //END if-else STATEMENT
-
+        
+        //if (EMConstants.GEN_TYPE.contains("eMuJava") ||
+        // EMConstants.GEN_TYPE.contains("Random")) {
+        sourceCode.instrumentAndTransformCode();
+//        } else {
+//            classicSourceCode.instrumentAndTransformCode();
+//        } //END if-else STATEMENT
+        
         projectManager.compileProject();
         try {
             Thread.sleep(500);
@@ -257,5 +264,5 @@ public class EMController {
             e.printStackTrace();
         } //END try-catch BLOCK
     }
-
+    
 } //END EMController CLASS
