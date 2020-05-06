@@ -225,6 +225,7 @@ public class ClassComponents {
                         dmList.addAll(tempList);
                         tempList.clear();
                         do {
+                            if (tokenNum + 1 >= tokenList.size()) break;
                             token = (Token) tokenList.get(++tokenNum);
                             dmList.add(token);
                         } while (!token.getToken().equals(";") && tokenNum + 1 < tokenList.size());

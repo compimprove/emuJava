@@ -249,7 +249,6 @@ public class EMController {
         } //END for LOOP
         
         sourceCode.generateMutants(1);
-        
         //if (EMConstants.GEN_TYPE.contains("eMuJava") ||
         // EMConstants.GEN_TYPE.contains("Random")) {
         sourceCode.instrumentAndTransformCode();

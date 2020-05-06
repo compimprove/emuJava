@@ -28,6 +28,7 @@ public class SourceCode {
         this.generateOMutant(classNumber, skel);
         ArrayList<MemberMethod> mmList = cComponents.getMMList();
         
+        
         ArrayList<String> mutationOperatorsList = EMConstants.MUTATION_OPERATORS;
         for (String mutationOperator : mutationOperatorsList) {
             if (mutationOperator.equals("ROR") && classNumber == 1) {
@@ -104,19 +105,27 @@ public class SourceCode {
                 } //END try-catch BLOCK
                 
                 int mutantNumber = 1;
+                
                 for (int mm = 0; mm < mmList.size(); mm++) {
-                    MemberMethod mMethod = (MemberMethod) mmList.get(mm);
+                    
+                    MemberMethod mMethod = mmList.get(mm);
                     if (mMethod.getMethodName().startsWith("toString") || mMethod.getMethodName().startsWith("set") || mMethod.getMethodName().startsWith("get")) {
                         continue;
                     } //END if STATEMENT
-                    ArrayList mmTokens = mMethod.getMethodTokens();
+                    ArrayList<Token> mmTokens = mMethod.getMethodTokens();
                     for (int mmt = 0; mmt < mmTokens.size(); mmt++) {
                         Token token = (Token) mmTokens.get(mmt);
                         if (token.getDescription().equals("Arithmatic Operator")) {
-                            ArrayList mutatedTokenList = getAORToken(token.getToken());
-                            for (int mtl = 0; mtl < mutatedTokenList.size(); mtl++) {
-                                String mutatedToken = (String) mutatedTokenList.get(mtl);
-                                this.generateMutant(classNumber, skel, mutantNumber, mm, mmt, mutatedToken, "AOR");
+                            ArrayList<String> mutatedTokenList = getAORToken(token.getToken());
+                            for (String mutatedToken : mutatedTokenList) {
+                                this.generateMutant(
+                                        classNumber,
+                                        skel,
+                                        mutantNumber,
+                                        mm,
+                                        mmt,
+                                        mutatedToken,
+                                        "AOR");
                                 Target target = new Target();
                                 target.setMutationOperator("AOR");
                                 target.setMutantNumber(mutantNumber);
@@ -148,7 +157,13 @@ public class SourceCode {
                         Token token = (Token) mmTokens.get(mmt);
                         if (token.getDescription().equals("Logical Operator")) {
                             String mutatedToken = getLCRToken(token.getToken());
-                            this.generateMutant(classNumber, skel, mutantNumber, mm, mmt, mutatedToken, "LCR");
+                            this.generateMutant(classNumber,
+                                    skel,
+                                    mutantNumber,
+                                    mm,
+                                    mmt,
+                                    mutatedToken,
+                                    "LCR");
                             Target target = new Target();
                             target.setMutationOperator("LCR");
                             target.setMutantNumber(mutantNumber);
@@ -259,7 +274,14 @@ public class SourceCode {
                                 } //END if STATEMENT
                             } while (!token.getToken().equals(";"));
                             mutatedToken += " )";
-                            this.generateMutant(classNumber, skel, mutantNumber, mm, tokenNumber, mutatedToken, "ABS");
+                            this.generateMutant(
+                                    classNumber,
+                                    skel,
+                                    mutantNumber,
+                                    mm,
+                                    tokenNumber,
+                                    mutatedToken,
+                                    "ABS");
                             Target target = new Target();
                             target.setMutationOperator("ABS");
                             target.setMutantNumber(mutantNumber);
@@ -296,9 +318,23 @@ public class SourceCode {
                         String header1 = m1Method.getMethodHeader();
                         if (header2.equals(header1)) {
                             String skel1 = this.generateSekeleton(1);
-                            this.generateMutant(1, skel1, mutantNumber, -1, -1, "", "IOP");
+                            this.generateMutant(1,
+                                    skel1,
+                                    mutantNumber,
+                                    -1,
+                                    -1,
+                                    
+                                    "", "IOP");
+                            
                             String skel2 = this.generateSekeleton(2);
-                            this.generateIOPMutant(2, skel2, mutantNumber, mm, -1, "", "IOP");
+                            this.generateIOPMutant(
+                                    2,
+                                    skel2,
+                                    mutantNumber,
+                                    mm,
+                                    -1,
+                                    "",
+                                    "IOP");
                             Target target = new Target();
                             target.setMutationOperator("IOP");
                             target.setMutantNumber(mutantNumber);
@@ -337,8 +373,8 @@ public class SourceCode {
                     
                     int tokenNumber = mMethod.getMethodHeaderCount() - 1;
                     ArrayList statements = mMethod.getStatementsList();
-                    for (int mmt = 0; mmt < statements.size(); mmt++) {
-                        Statement statement = (Statement) statements.get(mmt);
+                    for (Object o : statements) {
+                        Statement statement = (Statement) o;
                         ArrayList tokens = statement.getStatementTokens();
                         if (statement.getDescription().equals("Object Creation")) {
                             int t = 0;
@@ -430,9 +466,8 @@ public class SourceCode {
                         continue;
                     } //END if STATEMENT
                     int tokenNumber = mMethod.getMethodHeaderCount() - 1;
-                    ArrayList statements = mMethod.getStatementsList();
-                    for (int mmt = 0; mmt < statements.size(); mmt++) {
-                        Statement statement = (Statement) statements.get(mmt);
+                    ArrayList<Statement> statements = mMethod.getStatementsList();
+                    for (Statement statement : statements) {
                         ArrayList tokens = statement.getStatementTokens();
                         if (statement.getDescription().equals("Data Member Initialization")) {
                             Token token = (Token) tokens.get(0);
@@ -1257,25 +1292,31 @@ public class SourceCode {
         return rorList;
     } //END getRORToken()
     
-    public ArrayList getAORToken(String token) {
+    public ArrayList<String> getAORToken(String token) {
         String[] rorOperators = {"+", "-", "/", "*", "%"};
-        ArrayList rorList = new ArrayList();
+        ArrayList<String> rorList = new ArrayList<String>();
         rorList.add(rorOperators[0]);
         rorList.add(rorOperators[1]);
         rorList.add(rorOperators[2]);
         rorList.add(rorOperators[3]);
         rorList.add(rorOperators[4]);
-        if (token.equals("+")) {
-            rorList.remove("+");
-        } else if (token.equals("-")) {
-            rorList.remove("-");
-        } else if (token.equals("*")) {
-            rorList.remove("*");
-        } else if (token.equals("/")) {
-            rorList.remove("/");
-        } else if (token.equals("%")) {
-            rorList.remove("%");
-        } //END if-else STATMENTS
+        switch (token) {
+            case "+":
+                rorList.remove("+");
+                break;
+            case "-":
+                rorList.remove("-");
+                break;
+            case "*":
+                rorList.remove("*");
+                break;
+            case "/":
+                rorList.remove("/");
+                break;
+            case "%":
+                rorList.remove("%");
+                break;
+        }
         return rorList;
     } //END getAORToken()
     

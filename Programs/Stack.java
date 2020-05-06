@@ -1,16 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- * 
- * @author jBillu
- *
- * @equvalent
- * 
-*/
-
 public class Stack {
 
     private int top;
@@ -63,7 +50,7 @@ public class Stack {
           }
         }
         return element;
-    } //END pop() METHOD
+    }
         
     public void method4() {
     }

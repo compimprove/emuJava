@@ -72,6 +72,7 @@ public class EMScanner {
         char character = '0';
         line += " ";
         boolean shouldExecute = true;
+        
         for (int index = 0; index < line.length(); index++) {
             character = line.charAt(index);
             shouldExecute = true;
@@ -136,7 +137,7 @@ public class EMScanner {
                                 newToken.setLineNumber(lineNumber);
                                 tokenList.add(newToken);
                                 tokenBreaker = "";
-                            } //END if-else STATEMENTS                            
+                            } //END if-else STATEMENTS
                         } else if (tokenBreaker.equals("-")) {
                             String tempString = line.charAt(index + 1) + "";
                             if (tempString.equals("-")) {
@@ -167,7 +168,7 @@ public class EMScanner {
                                 newToken.setLineNumber(lineNumber);
                                 tokenList.add(newToken);
                                 tokenBreaker = "";
-                            } //END if-else STATEMENTS                            
+                            } //END if-else STATEMENTS
                         } else {
                             Token newToken = new Token();
                             newToken.setToken(tokenBreaker);

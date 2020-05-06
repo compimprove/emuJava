@@ -1034,9 +1034,9 @@ public class GeneticAlgorithm extends Thread {
     } //END breakTestCase() METHOD
     
     public void evaluateTestCases( Target target ) {
-        for( int t=0; t<this.population.size(); t++ ) {
-           TestCase testCase = ( TestCase )this.population.get( t );
-           testCase.setWeight( 0.0 );
+        for (Object value : this.population) {
+            TestCase testCase = (TestCase) value;
+            testCase.setWeight(0.0);
         } //END for LOOP
 
         try {

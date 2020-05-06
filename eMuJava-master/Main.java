@@ -8,17 +8,45 @@ public class Main {
     
     public static final String PROJECT_NAME = "Test";
     public static final String PROJECT_LOCATION = "C:\\Users\\compi\\OneDrive\\Desktop\\Dev\\";
-    public static final String CLASS_NAME = "Stack.java";
-    public static final String PROJECT_SOURCE = "C:\\Users\\compi\\sources\\Java\\emuJava\\Programs\\Stack.java";
+    public static final String CLASS_NAME = "ElectricHeater.java";
+    public static final String PROJECT_SOURCE = "C:\\Users\\compi\\sources\\Java\\emuJava\\Programs\\" + CLASS_NAME;
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
+        createProject();
         ClassComponents classComponents = scanSourceCode();
         ArrayList<String> mutationOperators = new ArrayList<String>(
                 Arrays.asList("ABS", "AOR", "LCR", "ROR", "UOI",
-                        "IOD", "PNC", "OMD", "JID", "EOC")
+                        "IOP", "PNC", "OMD", "JID", "EOC")
         );
         generateMutants(classComponents, mutationOperators);
         generateTestCase();
+    }
+    
+    private static void createProject() throws Exception {
+        File projectDir = new File(PROJECT_LOCATION + "/" + PROJECT_NAME);
+        boolean result = projectDir.mkdir();
+        File projectDirs = new File(projectDir.getAbsolutePath() + "/source");
+        result = projectDirs.mkdir() && result;
+        projectDirs = new File(projectDir.getAbsolutePath() + "/classes");
+        result = projectDirs.mkdir() && result;
+        projectDirs = new File(projectDir.getAbsolutePath() + "/mutants");
+        result = projectDirs.mkdir() && result;
+        projectDirs = new File(projectDir.getAbsolutePath() + "/omutants");
+        result = projectDirs.mkdir() && result;
+        projectDirs = new File(projectDir.getAbsolutePath() + "/testcases");
+        result = projectDirs.mkdir() && result;
+        projectDirs = new File(projectDir.getAbsolutePath() + "/original");
+        result = projectDirs.mkdir() && result;
+        projectDirs = new File(projectDir.getAbsolutePath() + "/instrument");
+        result = projectDirs.mkdir() && result;
+        projectDirs = new File(projectDir.getAbsolutePath() + "/oinstrument");
+        result = projectDirs.mkdir() && result;
+        projectDirs = new File(projectDir.getAbsolutePath() + "/traces");
+        result = projectDirs.mkdir() && result;
+        
+        if (!result) {
+            throw new Exception("Create Project has errors");
+        }
     }
     
     private static ClassComponents scanSourceCode() {
@@ -44,7 +72,7 @@ public class Main {
     
     private static void generateMutants(ClassComponents classComponents,
                                         ArrayList<String> mutationOperators) {
-        SourceCode sourceCode = new SourceCode();
+        MySourceCode sourceCode = new MySourceCode();
         EMProjectManager projectManager = new EMProjectManager();
         EMController emController = EMController.create();
         emController.setC1Components(classComponents);
