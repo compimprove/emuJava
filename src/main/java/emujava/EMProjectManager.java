@@ -4,14 +4,11 @@
  */
 package emujava;
 
-import emujava.*;
-
 import static emujava.EMuJava.jScrollPane1;
 import static emujava.EMuJava.jTree1;
 
 import java.io.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.util.Objects;
 import javax.swing.border.*;
 import javax.swing.*;

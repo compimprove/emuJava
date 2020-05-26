@@ -4,8 +4,6 @@
  */
 package emujava;
 
-import emujava.*;
-
 import java.io.*;
 import java.util.*;
 

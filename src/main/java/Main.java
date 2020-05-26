@@ -20,9 +20,7 @@ public class Main {
           Arrays.asList("ABS", "AOR", "LCR", "ROR", "UOI",
                   "IOP", "PNC", "OMD", "JID", "EOC")
   );
-
   public static final CAManager CA_MANAGER = new CAManager();
-
 
   public static void main(String[] args) throws Exception {
     createProject();
@@ -67,28 +65,29 @@ public class Main {
     EMConstants.CLASS_1 = CLASS1_NAME;
     emController.setC2Components(class2Components);
     EMConstants.MUTATION_OPERATORS.addAll(mutationOperators);
+    for (MemberMethod memberMethod : class1Components.getMMList()) {
+      memberMethod.identifyStatements();
+    }
+
     if (numberOfClass == 2) {
       EMConstants.CLASS_2 = CLASS2_NAME;
       EMConstants.GEN_TYPE = "eMuJava";
+      for (MemberMethod memberMethod : class2Components.getMMList()) {
+        memberMethod.identifyStatements();
+      }
       sourceCode.generateMutants(2);
     } else {
       sourceCode.generateMutants(1);
     }
-//    for (MemberMethod memberMethod : class1Components.getMMList()) {
-//      memberMethod.identifyStatements();
-//      memberMethod.printStatements();
-//    }
-//    for (MemberMethod memberMethod : class2Components.getMMList()) {
-//      memberMethod.identifyStatements();
-//      memberMethod.printStatements();
-//    }
     sourceCode.instrumentAndTransformCode();
     projectManager.compileProject();
     try {
       Thread.sleep(500);
-    } catch (Exception e) {
+    } catch (
+            Exception e) {
       e.printStackTrace();
     }
+
   }
 
   private static void generateTestCase() {

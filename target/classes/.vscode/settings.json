@@ -1,6 +1,0 @@
-{
-    "java.project.referencedLibraries": [
-        "lib/**/*.jar",
-        "AbsoluteLayout-RELEASE113.jar"
-    ]
-}

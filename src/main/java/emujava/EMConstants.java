@@ -4,8 +4,6 @@
  */
 package emujava;
 
-import com.sun.org.apache.xpath.internal.operations.Div;
-
 import java.util.*;
 
 /**

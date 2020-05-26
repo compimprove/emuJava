@@ -4,8 +4,6 @@
  */
 package emujava;
 
-import com.sun.corba.se.impl.oa.toa.TOA;
-
 import java.io.File;
 import java.util.*;
 

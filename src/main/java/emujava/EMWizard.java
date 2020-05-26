@@ -7,7 +7,6 @@ package emujava;
 import java.io.*;
 import java.awt.*;
 import javax.swing.*;
-import emujava.*;
 
 /**
  *

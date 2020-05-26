@@ -4,8 +4,6 @@
  */
 package emujava;
 
-import emujava.*;
-
 import java.io.*;
 import java.util.*;
 
@@ -13,7 +11,7 @@ import java.util.*;
  * @author jBillu
  * @version 1.0 August 25, 2013
  */
-public class SourceCode {
+public class MySourceCode {
     
     public void generateMutants(int classNumber) {
         String skel = "";
@@ -27,7 +25,6 @@ public class SourceCode {
         } //END if-else STATEMENT
         this.generateOMutant(classNumber, skel);
         ArrayList<MemberMethod> mmList = cComponents.getMMList();
-        
         
         ArrayList<String> mutationOperatorsList = EMConstants.MUTATION_OPERATORS;
         for (String mutationOperator : mutationOperatorsList) {
@@ -56,6 +53,7 @@ public class SourceCode {
                                 if (!tempToken.getToken().equals("this")) {
                                     ArrayList<String> mutatedTokenList
                                             = getRORToken(token.getToken());
+                                    
                                     for (String mutatedToken : mutatedTokenList) {
                                         this.generateMutant(
                                                 classNumber,
@@ -75,6 +73,7 @@ public class SourceCode {
                                 } //END if STATEMENT
                             } else {
                                 ArrayList<String> mutatedTokenList = getRORToken(token.getToken());
+                                // Take random 5 token
                                 for (String mutatedToken : mutatedTokenList) {
                                     this.generateMutant(classNumber,
                                             skel,
@@ -105,27 +104,19 @@ public class SourceCode {
                 } //END try-catch BLOCK
                 
                 int mutantNumber = 1;
-                
                 for (int mm = 0; mm < mmList.size(); mm++) {
-                    
-                    MemberMethod mMethod = mmList.get(mm);
+                    MemberMethod mMethod = (MemberMethod) mmList.get(mm);
                     if (mMethod.getMethodName().startsWith("toString") || mMethod.getMethodName().startsWith("set") || mMethod.getMethodName().startsWith("get")) {
                         continue;
                     } //END if STATEMENT
-                    ArrayList<Token> mmTokens = mMethod.getMethodTokens();
+                    ArrayList mmTokens = mMethod.getMethodTokens();
                     for (int mmt = 0; mmt < mmTokens.size(); mmt++) {
                         Token token = (Token) mmTokens.get(mmt);
                         if (token.getDescription().equals("Arithmatic Operator")) {
-                            ArrayList<String> mutatedTokenList = getAORToken(token.getToken());
-                            for (String mutatedToken : mutatedTokenList) {
-                                this.generateMutant(
-                                        classNumber,
-                                        skel,
-                                        mutantNumber,
-                                        mm,
-                                        mmt,
-                                        mutatedToken,
-                                        "AOR");
+                            ArrayList mutatedTokenList = getAORToken(token.getToken());
+                            for (int mtl = 0; mtl < mutatedTokenList.size(); mtl++) {
+                                String mutatedToken = (String) mutatedTokenList.get(mtl);
+                                this.generateMutant(classNumber, skel, mutantNumber, mm, mmt, mutatedToken, "AOR");
                                 Target target = new Target();
                                 target.setMutationOperator("AOR");
                                 target.setMutantNumber(mutantNumber);
@@ -157,13 +148,7 @@ public class SourceCode {
                         Token token = (Token) mmTokens.get(mmt);
                         if (token.getDescription().equals("Logical Operator")) {
                             String mutatedToken = getLCRToken(token.getToken());
-                            this.generateMutant(classNumber,
-                                    skel,
-                                    mutantNumber,
-                                    mm,
-                                    mmt,
-                                    mutatedToken,
-                                    "LCR");
+                            this.generateMutant(classNumber, skel, mutantNumber, mm, mmt, mutatedToken, "LCR");
                             Target target = new Target();
                             target.setMutationOperator("LCR");
                             target.setMutantNumber(mutantNumber);
@@ -249,11 +234,11 @@ public class SourceCode {
                     MemberMethod mMethod = (MemberMethod) mmList.get(mm);
                     if (mMethod.getMethodName().startsWith("toString") || mMethod.getMethodName().startsWith("set") || mMethod.getMethodName().startsWith("get")) {
                         continue;
-                    } //END if STATEMENT
+                    }
+                    
                     int tokenNumber = mMethod.getMethodHeaderCount() - 1;
-                    ArrayList statements = mMethod.getStatementsList();
-                    for (int mmt = 0; mmt < statements.size(); mmt++) {
-                        Statement statement = (Statement) statements.get(mmt);
+                    ArrayList<Statement> statements = mMethod.getStatementsList();
+                    for (Statement statement : statements) {
                         ArrayList tokens = statement.getStatementTokens();
                         if (statement.getDescription().equals("Assignment Statement") || statement.getDescription().equals("Data Member Initialization")) {
                             int t = 0;
@@ -274,14 +259,7 @@ public class SourceCode {
                                 } //END if STATEMENT
                             } while (!token.getToken().equals(";"));
                             mutatedToken += " )";
-                            this.generateMutant(
-                                    classNumber,
-                                    skel,
-                                    mutantNumber,
-                                    mm,
-                                    tokenNumber,
-                                    mutatedToken,
-                                    "ABS");
+                            this.generateMutant(classNumber, skel, mutantNumber, mm, tokenNumber, mutatedToken, "ABS");
                             Target target = new Target();
                             target.setMutationOperator("ABS");
                             target.setMutantNumber(mutantNumber);
@@ -295,6 +273,7 @@ public class SourceCode {
                     } //END for LOOP
                 } //END for LOOP
             } //END if STATEMENT
+            // OOP operators
             if (mutationOperator.equals("IOP") && classNumber == 2) {
                 try {
                     File file = new File(EMConstants.PROJECT_LOCATION + EMConstants.PROJECT_NAME + "\\mutants\\IOP");
@@ -318,23 +297,9 @@ public class SourceCode {
                         String header1 = m1Method.getMethodHeader();
                         if (header2.equals(header1)) {
                             String skel1 = this.generateSekeleton(1);
-                            this.generateMutant(1,
-                                    skel1,
-                                    mutantNumber,
-                                    -1,
-                                    -1,
-                                    
-                                    "", "IOP");
-                            
+                            this.generateMutant(1, skel1, mutantNumber, -1, -1, "", "IOP");
                             String skel2 = this.generateSekeleton(2);
-                            this.generateIOPMutant(
-                                    2,
-                                    skel2,
-                                    mutantNumber,
-                                    mm,
-                                    -1,
-                                    "",
-                                    "IOP");
+                            this.generateIOPMutant(2, skel2, mutantNumber, mm, -1, "", "IOP");
                             Target target = new Target();
                             target.setMutationOperator("IOP");
                             target.setMutantNumber(mutantNumber);
@@ -373,8 +338,8 @@ public class SourceCode {
                     
                     int tokenNumber = mMethod.getMethodHeaderCount() - 1;
                     ArrayList statements = mMethod.getStatementsList();
-                    for (Object o : statements) {
-                        Statement statement = (Statement) o;
+                    for (int mmt = 0; mmt < statements.size(); mmt++) {
+                        Statement statement = (Statement) statements.get(mmt);
                         ArrayList tokens = statement.getStatementTokens();
                         if (statement.getDescription().equals("Object Creation")) {
                             int t = 0;
@@ -464,16 +429,25 @@ public class SourceCode {
                     MemberMethod mMethod = (MemberMethod) mmList.get(mm);
                     if (mMethod.getMethodName().startsWith("toString") || mMethod.getMethodName().startsWith("set") || mMethod.getMethodName().startsWith("get")) {
                         continue;
-                    } //END if STATEMENT
+                    }
+                    
                     int tokenNumber = mMethod.getMethodHeaderCount() - 1;
                     ArrayList<Statement> statements = mMethod.getStatementsList();
+                    
                     for (Statement statement : statements) {
-                        ArrayList tokens = statement.getStatementTokens();
+                        ArrayList<Token> tokens = statement.getStatementTokens();
                         if (statement.getDescription().equals("Data Member Initialization")) {
-                            Token token = (Token) tokens.get(0);
+                            Token token = tokens.get(0);
                             String mutatedToken = "// " + token.getToken();
                             tokenNumber++;
-                            this.generateMutant(classNumber, skel, mutantNumber, mm, tokenNumber, mutatedToken, "JID");
+                            this.generateMutant(
+                                    classNumber,
+                                    skel,
+                                    mutantNumber,
+                                    mm,
+                                    tokenNumber,
+                                    mutatedToken,
+                                    "JID");
                             Target target = new Target();
                             target.setMutationOperator("JID");
                             target.setMutantNumber(mutantNumber);
@@ -562,8 +536,8 @@ public class SourceCode {
         } //END if-else STATEMENT
         
         ArrayList import1List = cComponents.getImportsList();
-        for (int i = 0; i < import1List.size(); i++) {
-            Token token = (Token) import1List.get(i);
+        for (Object o : import1List) {
+            Token token = (Token) o;
             skel = skel + token.getToken();
             if (token.getToken().equals("import")) {
                 skel = skel + " ";
@@ -584,8 +558,8 @@ public class SourceCode {
         
         ArrayList dMembers = cComponents.getDMList();
         skel = this.addIndentation(skel, 1);
-        for (int i = 0; i < dMembers.size(); i++) {
-            Token token = (Token) dMembers.get(i);
+        for (Object dMember : dMembers) {
+            Token token = (Token) dMember;
             if (token.getToken().equals(",")) {
                 if (skel.endsWith(" ")) {
                     skel = skel.substring(0, skel.length() - 1) + token.getToken() + " ";
@@ -606,14 +580,14 @@ public class SourceCode {
         skel = skel + "\n";
         
         ArrayList ccList = cComponents.getCCList();
-        for (int c = 0; c < ccList.size(); c++) {
-            ClassConstructor cc = (ClassConstructor) ccList.get(c);
-            
+        for (Object o : ccList) {
+            ClassConstructor cc = (ClassConstructor) o;
+        
             int indentCount = 1;
             skel = this.addIndentation(skel, indentCount);
             ArrayList ccTokens = cc.getConstructorTokens();
-            for (int cct = 0; cct < ccTokens.size(); cct++) {
-                Token token = (Token) ccTokens.get(cct);
+            for (Object ccToken : ccTokens) {
+                Token token = (Token) ccToken;
                 if (token.getDescription().equals("Relational Operator")) {
                     if (skel.endsWith(" ")) {
                         skel = skel.substring(0, skel.length() - 1) + token.getToken();
@@ -677,15 +651,13 @@ public class SourceCode {
             cComponents = EMController.create().getC2Components();
         } //END if-else STATEMENT
         
-        ArrayList mmList = cComponents.getMMList();
+        ArrayList<MemberMethod> mmList = cComponents.getMMList();
         
-        for (int mm = 0; mm < mmList.size(); mm++) {
-            MemberMethod mMethod = (MemberMethod) mmList.get(mm);
+        for (MemberMethod mMethod : mmList) {
             int indentCount = 1;
             skel = this.addIndentation(skel, indentCount);
-            ArrayList mmTokens = mMethod.getMethodTokens();
-            for (int mmt = 0; mmt < mmTokens.size(); mmt++) {
-                Token token = (Token) mmTokens.get(mmt);
+            ArrayList<Token> mmTokens = mMethod.getMethodTokens();
+            for (Token token : mmTokens) {
                 if (token.getDescription().equals("Relational Operator")) {
                     if (skel.endsWith(" ")) {
                         skel = skel.substring(0, skel.length() - 1) + token.getToken();
@@ -975,11 +947,15 @@ public class SourceCode {
             cComponents = EMController.create().getC2Components();
         } //END if-else STATEMENT
         
-        ArrayList mmList = cComponents.getMMList();
+        ArrayList<MemberMethod> mmList = cComponents.getMMList();
         
         String topComment = "";
         if (methodNumber >= 0) {
-            topComment = "//" + cComponents.getClassName() + "." + ((MemberMethod) mmList.get(methodNumber)).getMethodName() + "()\n";
+            topComment = "//"
+                    + cComponents.getClassName()
+                    + "."
+                    + (mmList.get(methodNumber)).getMethodName()
+                    + "()\n";
             skel = topComment + skel;
         } //END if STATEMENT
         
@@ -989,7 +965,7 @@ public class SourceCode {
                 
                 int indentCount = 1;
                 skel = this.addIndentation(skel, indentCount);
-                ArrayList mmTokens = mMethod.getMethodTokens();
+                ArrayList<Token> mmTokens = mMethod.getMethodTokens();
                 for (int mmt = 0; mmt < tokenNumber; mmt++) {
                     Token token = (Token) mmTokens.get(mmt);
                     if (token.getDescription().equals("Relational Operator")) {
@@ -1057,41 +1033,49 @@ public class SourceCode {
                 } //END if STATEMENT
                 do {
                     if (!mutationOperator.equals("ABS")) {
-                        if (mutatedToken.equals(".")) {
-                            if (skel.endsWith(" ")) {
-                                skel = skel.substring(0, skel.length() - 1) + mutatedToken;
-                            } else {
-                                skel = skel + mutatedToken;
-                            } //END if-else STATEMENT
-                        } else if (mutatedToken.equals("(") || mutatedToken.equals(",")) {
-                            if (skel.endsWith(" ")) {
-                                skel = skel.substring(0, skel.length() - 1) + mutatedToken + " ";
-                            } else {
-                                skel = skel + mutatedToken + " ";
-                            } //END if-else STATEMENT
-                        } else if (mutatedToken.equals(")")) {
-                            if (skel.endsWith("( ")) {
-                                skel = skel.substring(0, skel.length() - 1) + mutatedToken + " ";
-                            } else {
-                                skel = skel + mutatedToken + " ";
-                            } //END if-else STATEMENT
-                        } else if (mutatedToken.equals(";")) {
-                            if (skel.endsWith(" ")) {
-                                skel = skel.substring(0, skel.length() - 1) + mutatedToken + "\n";
-                            } else {
+                        switch (mutatedToken) {
+                            case ".":
+                            case "<":
+                            case ">":
+                            case ">=":
+                            case "==":
+                            case "!=":
+                                if (skel.endsWith(" ")) {
+                                    skel = skel.substring(0, skel.length() - 1) + mutatedToken;
+                                } else {
+                                    skel = skel + mutatedToken;
+                                } //END if-else STATEMENT
+                                break;
+                            case "(":
+                            case ",":
+                                if (skel.endsWith(" ")) {
+                                    skel = skel.substring(0, skel.length() - 1) + mutatedToken + " ";
+                                } else {
+                                    skel = skel + mutatedToken + " ";
+                                } //END if-else STATEMENT
+                                break;
+                            case ")":
+                                if (skel.endsWith("( ")) {
+                                    skel = skel.substring(0, skel.length() - 1) + mutatedToken + " ";
+                                } else {
+                                    skel = skel + mutatedToken + " ";
+                                } //END if-else STATEMENT
+                                break;
+                            case ";":
+                                if (skel.endsWith(" ")) {
+                                    skel = skel.substring(0, skel.length() - 1) + mutatedToken + "\n";
+                                } else {
+                                    skel = skel + mutatedToken + "\n";
+                                } //END if-else STATEMENT
+                                break;
+                            case "}":
+                            case "{":
                                 skel = skel + mutatedToken + "\n";
-                            } //END if-else STATEMENT
-                        } else if (mutatedToken.equals("}") || mutatedToken.equals("{")) {
-                            skel = skel + mutatedToken + "\n";
-                        } else if (mutatedToken.equals("<") || mutatedToken.equals(">") || mutatedToken.equals(">=") || mutatedToken.equals(">=") || mutatedToken.equals("==") || mutatedToken.equals("!=")) {
-                            if (skel.endsWith(" ")) {
-                                skel = skel.substring(0, skel.length() - 1) + mutatedToken;
-                            } else {
-                                skel = skel + mutatedToken;
-                            } //END if-else STATEMENT
-                        } else {
-                            skel = skel + mutatedToken + " ";
-                        } //END if-else STATEMENT
+                                break;
+                            default:
+                                skel = skel + mutatedToken + " ";
+                                break;
+                        }
                     } //END if-else STATEMENT
                     mutatedToken = ((Token) mmTokens.get(tokenNumber)).getToken();
                     tokenNumber++;
@@ -1292,31 +1276,25 @@ public class SourceCode {
         return rorList;
     } //END getRORToken()
     
-    public ArrayList<String> getAORToken(String token) {
+    public ArrayList getAORToken(String token) {
         String[] rorOperators = {"+", "-", "/", "*", "%"};
-        ArrayList<String> rorList = new ArrayList<String>();
+        ArrayList rorList = new ArrayList();
         rorList.add(rorOperators[0]);
         rorList.add(rorOperators[1]);
         rorList.add(rorOperators[2]);
         rorList.add(rorOperators[3]);
         rorList.add(rorOperators[4]);
-        switch (token) {
-            case "+":
-                rorList.remove("+");
-                break;
-            case "-":
-                rorList.remove("-");
-                break;
-            case "*":
-                rorList.remove("*");
-                break;
-            case "/":
-                rorList.remove("/");
-                break;
-            case "%":
-                rorList.remove("%");
-                break;
-        }
+        if (token.equals("+")) {
+            rorList.remove("+");
+        } else if (token.equals("-")) {
+            rorList.remove("-");
+        } else if (token.equals("*")) {
+            rorList.remove("*");
+        } else if (token.equals("/")) {
+            rorList.remove("/");
+        } else if (token.equals("%")) {
+            rorList.remove("%");
+        } //END if-else STATMENTS
         return rorList;
     } //END getAORToken()
     
