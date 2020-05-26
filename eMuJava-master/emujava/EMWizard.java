@@ -146,7 +146,7 @@ public class EMWizard extends javax.swing.JDialog {
         jLabel7.setText("Class 2 (Optional)");
         jPanel2.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 187, -1, -1));
 
-        jTextField1.setText("C:/jBillu/EMuJavaTests");
+        jTextField1.setText("G:/emuJava-master/Programs/");
         jTextField1.setEnabled(false);
         jTextField1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -166,7 +166,8 @@ public class EMWizard extends javax.swing.JDialog {
         jTextField2.setText("Test");
         jPanel2.add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(113, 88, 200, -1));
 
-        jTextField3.setText("C:/Users/jBillu/Documents/Stack.java");
+        jTextField3.setText("G:/emuJava-master/Programs/ElectricHeater.java");
+        jTextField4.setText("G:/emuJava-master/Programs/Subclass.java");
         jTextField3.setToolTipText("");
         jTextField3.setEnabled(false);
         jTextField3.addActionListener(new java.awt.event.ActionListener() {
@@ -179,7 +180,7 @@ public class EMWizard extends javax.swing.JDialog {
         jTextField4.setEnabled(false);
         jPanel2.add(jTextField4, new org.netbeans.lib.awtextra.AbsoluteConstraints(113, 184, 200, -1));
 
-        jButton5.setText("Browse");
+        jButton5.setText("Browser");
         jButton5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton5ActionPerformed(evt);

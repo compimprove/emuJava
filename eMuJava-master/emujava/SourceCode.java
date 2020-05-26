@@ -472,6 +472,7 @@ public class SourceCode {
                         if (statement.getDescription().equals("Data Member Initialization")) {
                             Token token = (Token) tokens.get(0);
                             String mutatedToken = "// " + token.getToken();
+
                             tokenNumber++;
                             this.generateMutant(classNumber, skel, mutantNumber, mm, tokenNumber, mutatedToken, "JID");
                             Target target = new Target();
@@ -981,8 +982,8 @@ public class SourceCode {
         if (methodNumber >= 0) {
             topComment = "//" + cComponents.getClassName() + "." + ((MemberMethod) mmList.get(methodNumber)).getMethodName() + "()\n";
             skel = topComment + skel;
+            //System.err.println("dong 984: "  + skel);
         } //END if STATEMENT
-        
         for (int mm = 0; mm < mmList.size(); mm++) {
             if (mm == methodNumber) {
                 MemberMethod mMethod = (MemberMethod) mmList.get(mm);
@@ -991,7 +992,9 @@ public class SourceCode {
                 skel = this.addIndentation(skel, indentCount);
                 ArrayList mmTokens = mMethod.getMethodTokens();
                 for (int mmt = 0; mmt < tokenNumber; mmt++) {
+
                     Token token = (Token) mmTokens.get(mmt);
+
                     if (token.getDescription().equals("Relational Operator")) {
                         if (skel.endsWith(" ")) {
                             skel = skel.substring(0, skel.length() - 1) + token.getToken();
@@ -1041,10 +1044,19 @@ public class SourceCode {
                         skel = skel + token.getToken() + " ";
                     } //END if-else STATEMENT
                 } //END for LOOP
-                
+                if(mutationOperator.equals("JID"))
+                    skel = skel.substring(0, skel.length() - 5);
+                if(mutationOperator.equals("UOI"))
+                {
+                    int idx =  skel.lastIndexOf('=');
+                    skel = skel.substring(0, idx+1) +" ";
+                }
+                System.err.println("dong 14077: "+ skel);
+                System.err.println("token" + mutatedToken);
                 tokenNumber = tokenNumber + 1;
                 if (mutationOperator.equals("ABS")) {
-                    skel = skel + mutatedToken;
+                    int idx =  skel.lastIndexOf('=');
+                    skel = skel.substring(0, idx+1) +" "+ mutatedToken;
                 } //END if STATEMENT
                 if (mutationOperator.equals("EOC")) {
                     if (mutatedToken.contains("==")) {
@@ -1101,6 +1113,7 @@ public class SourceCode {
                         skel = skel.substring(0, skel.length() - 1) + mutatedToken + "\t//Mutated with " + mutationOperator + "\n";
                     } else {
                         skel = skel + mutatedToken + "\t//Mutated with " + mutationOperator + "\n";
+                        System.err.println("dong 1105 " + mutatedToken);
                     } //END if-else STATEMENT
                     skel = this.addIndentation(skel, indentCount);
                 } else if (mutatedToken.equals("{")) {
@@ -1108,7 +1121,7 @@ public class SourceCode {
                     indentCount++;
                     skel = this.addIndentation(skel, indentCount);
                 } //END if-else STATEMENT
-                
+              //  System.err.println("dong 1112: "+ skel);
                 for (int mmt = tokenNumber; mmt < mmTokens.size(); mmt++) {
                     Token token = (Token) mmTokens.get(mmt);
                     if (token.getDescription().equals("Relational Operator")) {
@@ -1158,6 +1171,7 @@ public class SourceCode {
                         skel = skel.substring(0, skel.length() - 1) + " " + token.getToken() + " ";
                     } else {
                         skel = skel + token.getToken() + " ";
+                      //  System.err.println("dong 1162: " + skel);
                     } //END if-else STATEMENT
                 } //END for LOOP
                 skel = skel + "\n";
@@ -1216,11 +1230,13 @@ public class SourceCode {
                         skel = skel.substring(0, skel.length() - 1) + " " + token.getToken() + " ";
                     } else {
                         skel = skel + token.getToken() + " ";
+
                     } //END if-else STATEMENT
                 } //END for LOOP
                 skel = skel + "\n";
             } //END if-else STATEMENT
         } //END for LOOP
+       // System.err.println("dong 1227: "+ skel);
         skel = skel + "\n}";
         try {
             File file = new File(EMConstants.PROJECT_LOCATION + EMConstants.PROJECT_NAME + "/mutants/" + mutationOperator + "/" + mutantNumber);
@@ -1495,7 +1511,10 @@ public class SourceCode {
                                                     otempList.add(oline);
                                                     otempList.add(oinstrumentedString);
                                                 } else if (line.contains("Mutated with JID")) {
+                                                    //System.err.println("dong 1503 " + getIdentifier(line));
+                                                  //  line = line.replaceFirst("this", "");
                                                     instrumentedString += "raf.writeBytes( \"N: \" + " + getIdentifier(line) + ");\n";
+                                                  //  System.err.println("dong 1505 " + instrumentedString);
                                                     instrumentedString += "raf.writeBytes( \"\\n\" );\n";
                                                     instrumentedString += "raf.close();\n";
                                                     instrumentedString += "} catch( Exception e ) { }\n";
@@ -1644,7 +1663,9 @@ public class SourceCode {
                                                     otempList.add(oline);
                                                     otempList.add(oinstrumentedString);
                                                 } else if (line.contains("Mutated with JID")) {
+
                                                     instrumentedString += "raf.writeBytes( \"N: \" + " + getIdentifier(line) + ");\n";
+
                                                     instrumentedString += "raf.writeBytes( \"\\n\" );\n";
                                                     instrumentedString += "raf.close();\n";
                                                     instrumentedString += "} catch( Exception e ) { }\n";
@@ -2503,7 +2524,7 @@ public class SourceCode {
         char ch = ' ';
         int index = 0;
         line = line.trim();
-        System.out.println(line);
+        System.out.println("dong 2509" + line);
         if (line.startsWith("this.")) {
             index = 5;
         } else if (line.startsWith("int")) {
@@ -2531,7 +2552,8 @@ public class SourceCode {
         } else {
             int rand = (int) (Math.random() * 100);
             identifier += rand;
-        } //END if-else STATEMENT
+        } //END if-else STATEMENT\\
+      //  System.err.println("dong 2541: " + identifier );
         return identifier;
     } //END getIdentifier() METHOD
     
