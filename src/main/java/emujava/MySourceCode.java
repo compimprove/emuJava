@@ -1017,10 +1017,17 @@ public class MySourceCode {
                         skel = skel + token.getToken() + " ";
                     } //END if-else STATEMENT
                 } //END for LOOP
-                
+                if(mutationOperator.equals("JID"))
+                    skel = skel.substring(0, skel.length() - 5);
+                if(mutationOperator.equals("UOI"))
+                {
+                    int idx =  skel.lastIndexOf('=');
+                    skel = skel.substring(0, idx+1) +" ";
+                }
                 tokenNumber = tokenNumber + 1;
                 if (mutationOperator.equals("ABS")) {
-                    skel = skel + mutatedToken;
+                    int idx =  skel.lastIndexOf('=');
+                    skel = skel.substring(0, idx+1) +" "+ mutatedToken;
                 } //END if STATEMENT
                 if (mutationOperator.equals("EOC")) {
                     if (mutatedToken.contains("==")) {
