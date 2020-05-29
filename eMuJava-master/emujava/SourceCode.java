@@ -197,11 +197,11 @@ public class SourceCode {
                     for (int mmt = 0; mmt < statements.size(); mmt++) {
                         Statement statement = (Statement) statements.get(mmt);
                         ArrayList tokens = statement.getStatementTokens();
-                        for(int i =0; i < tokens.size(); i++)
-                        {
-                            Token tk = (Token) tokens.get(i);
-                            System.err.println("token là: " + tk.getToken() + " " + tk.getDescription());
-                        }
+//                        for(int i =0; i < tokens.size(); i++)
+//                        {
+//                            Token tk = (Token) tokens.get(i);
+//                            System.err.println("token là: " + tk.getToken() + " " + tk.getDescription());
+//                        }
                         if (statement.getDescription().equals("Assignment Statement") || statement.getDescription().equals("Data Member Initialization")) {
                             int t = 0;
                             Token token = null;
@@ -997,6 +997,7 @@ public class SourceCode {
             skel = topComment + skel;
             //System.err.println("dong 984: "  + skel);
         } //END if STATEMENT
+        boolean check = false;
         for (int mm = 0; mm < mmList.size(); mm++) {
             if (mm == methodNumber) {
                 MemberMethod mMethod = (MemberMethod) mmList.get(mm);
@@ -1072,12 +1073,12 @@ public class SourceCode {
                 } //END if STATEMENT
                 if(mutationOperator.equals("UOI"))
                 {
-                    System.out.println("old skel:  " +skel);
+                 //   System.out.println("old skel:  " +skel);
                     String oldToken = (mutatedToken.replace("++", "")).replace("--", "");
                     int vt = skel.lastIndexOf(oldToken);
                     int len = skel.length();
                     skel = skel.substring(0, vt-1) +" "+ mutatedToken+ " " + skel.substring(vt+oldToken.length(), len) + " ";
-                    System.out.println("token UOI: " +skel);
+//                    System.out.println("token UOI: " +skel);
                 }
                 else
                 do {
@@ -1139,8 +1140,10 @@ public class SourceCode {
                 } //END if-else STATEMENT
                 if(mutationOperator.equals("UOI"))
                     tokenNumber--;
+
                 for (int mmt = tokenNumber; mmt < mmTokens.size(); mmt++) {
                     Token token = (Token) mmTokens.get(mmt);
+
                     if (token.getDescription().equals("Relational Operator")) {
                         if (skel.endsWith(" ")) {
                             skel = skel.substring(0, skel.length() - 1) + token.getToken();
@@ -1167,16 +1170,24 @@ public class SourceCode {
                         } //END if-else STATEMENT
                     } else if (token.getToken().equals(";")) {
                         if (skel.endsWith(" ")) {
-                            skel = skel.substring(0, skel.length() - 1) + token.getToken() + "\n";
+                            skel = skel.substring(0, skel.length() - 1) + token.getToken() ;//+ "\n";
                         } else {
-                            skel = skel + token.getToken() + "\n";
+                            skel = skel + token.getToken() ;// + "\n";
                         } //END if-else STATEMENT
                         skel = this.addIndentation(skel, indentCount);
+                        if(!check && mutationOperator.equals("UOI"))
+                        {
+                            skel += "\t // Mutant with UOI ;    \n ";
+                            check = true;
+                        }
+
                     } else if (token.getToken().equals("}")) {
                         indentCount--;
+                        System.out.println("skel cũ: " + skel);
                         skel = this.removeIndentation(skel, 1);
-                        skel = skel + token.getToken() + "\n";
+                        skel = skel + "\n    " + token.getToken() + "\n";
                         skel = this.addIndentation(skel, indentCount);
+                        System.out.println("skel mới: " + skel);
                     } else if (token.getToken().equals("{")) {
                         skel = skel + token.getToken() + "\n";
                         indentCount++;
@@ -1189,12 +1200,14 @@ public class SourceCode {
                     } else {
                         skel = skel + token.getToken() + " ";
                       //  System.err.println("dong 1162: " + skel);
-                    } //END if-else STATEMENT
+                    };
+
+                    //END if-else STATEMENT
                 } //END for LOOP
                 skel = skel + "\n";
+                System.out.println("dong 1206: " + skel);
             } else {
                 MemberMethod mMethod = (MemberMethod) mmList.get(mm);
-                
                 int indentCount = 1;
                 skel = this.addIndentation(skel, indentCount);
                 ArrayList mmTokens = mMethod.getMethodTokens();
@@ -1253,8 +1266,9 @@ public class SourceCode {
                 skel = skel + "\n";
             } //END if-else STATEMENT
         } //END for LOOP
-       // System.err.println("dong 1227: "+ skel);
+
         skel = skel + "\n}";
+//        System.err.println("dong 1268: "+ skel);
         try {
             File file = new File(EMConstants.PROJECT_LOCATION + EMConstants.PROJECT_NAME + "/mutants/" + mutationOperator + "/" + mutantNumber);
             if (!file.exists()) {

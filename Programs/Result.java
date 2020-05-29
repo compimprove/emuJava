@@ -22,7 +22,8 @@ public class Result {
   public void method1() {
   }
 
-  public void method2() {
+  public void method2(int v) {
+      this.result = v;
   }
 
   public void setEarnedGrade(char grade, int credits) {
@@ -91,4 +92,7 @@ public class Result {
       return result;
   } //END calcCGPA() METHOD
 
+    public static void main(String[] args) {
+        this.setEarnedGrade('A', 4);
+    }
 } //END Result CLASS
