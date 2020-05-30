@@ -19,12 +19,17 @@ public class CAManager {
     ArrayList<Target> randomTargets = EMConstants.getRandomTargets();
     int threadNumber = 1;
     System.out.println("___________________");
-    System.out.println("Some Test Cases: ");
+    System.out.println("Generate Test Cases and Evaluate: ");
     for (Target target : randomTargets) {
       MyAlgorithm hillClimbing = new MyAlgorithm();
       hillClimbing.setTarget(target);
       hillClimbing.setThreadNumber(threadNumber++);
       hillClimbing.run();
+    }
+    System.out.println("___________________");
+    System.out.println("Effective Test Cases: ");
+    for (TestCase testCase : EMConstants.EFFECTIVE_TESTCASES) {
+      System.out.println(testCase.toString());
     }
   }
 }

@@ -56,7 +56,7 @@ public class Main {
   }
 
   private static void generateTestCase() {
-    EMConstants.MAX_ITERATIONS = 5;
+    EMConstants.MAX_ITERATIONS = 1;
     CA_MANAGER.run();
   }
 

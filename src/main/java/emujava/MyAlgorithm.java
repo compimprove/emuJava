@@ -51,19 +51,20 @@ public class MyAlgorithm {
   }
 
   public void executeCA() {
-    this.generateTestCaseFor(target);
-    System.out.println(this.population.get(0).toString());
-    this.executeTestCases(target);
-//    for (int i = 1; i <= EMConstants.MAX_ITERATIONS; i++) {
-//      this.generateTestCaseFor(target);
-//      this.executeTestCases(target);
-//      this.evaluateTestCases(target);
-//      if (target.getAchieved()) {
-//        EMConstants.ACHIEVED_TARGETS.add(target);
-//        EMConstants.EFFECTIVE_TESTCASES.add(target.getTestCase());
-//        break;
-//      }
-//    }
+//    this.generateTestCaseFor(target);
+//    System.out.println(this.population.get(0).toString());
+//    this.executeTestCases(target);
+    for (int i = 1; i <= EMConstants.MAX_ITERATIONS; i++) {
+      this.generateTestCaseFor(target);
+      System.out.println(this.population.get(0).toString());
+      this.executeTestCases(target);
+      this.evaluateTestCases(target);
+      if (target.getAchieved()) {
+        EMConstants.ACHIEVED_TARGETS.add(target);
+        EMConstants.EFFECTIVE_TESTCASES.add(target.getTestCase());
+        break;
+      }
+    }
   }
 
 
@@ -735,8 +736,8 @@ public class MyAlgorithm {
               } //END if-else STATEMENT
             } else {
               testCase.setFitness(true);
-              EMuJava.jTextArea2.append("Test Case# " + (t + 1) + "\n");
-              EMuJava.jTextArea2.append(((TestCase) this.population.get(t)).toString());
+//              EMuJava.jTextArea2.append("Test Case# " + (t + 1) + "\n");
+//              EMuJava.jTextArea2.append(((TestCase) this.population.get(t)).toString());
               StringTokenizer tokenizer = new StringTokenizer(lineI, " ");
               tokenizer.nextToken();
               String token = tokenizer.nextToken();
