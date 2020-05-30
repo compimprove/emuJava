@@ -18,6 +18,8 @@ public class CAManager {
   public void run() {
     ArrayList<Target> randomTargets = EMConstants.getRandomTargets();
     int threadNumber = 1;
+    System.out.println("___________________");
+    System.out.println("Some Test Cases: ");
     for (Target target : randomTargets) {
       MyAlgorithm hillClimbing = new MyAlgorithm();
       hillClimbing.setTarget(target);

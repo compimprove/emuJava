@@ -31,7 +31,7 @@ public class Main {
     ClassComponents class1Components = scanSourceCode(ClASS1_SOURCE);
     ClassComponents class2Components = scanSourceCode(ClASS2_SOURCE);
     generateMutants(class1Components, class2Components, 1);
-    //generateTestCase();
+    generateTestCase();
   }
 
   private static ClassComponents scanSourceCode(String class_source) {
@@ -68,6 +68,7 @@ public class Main {
     EMConstants.PROJECT_LOCATION = PROJECT_LOCATION;
     EMConstants.PROJECT_NAME = PROJECT_NAME;
     EMConstants.CLASS_1 = CLASS1_NAME;
+    EMConstants.POPULATION_SIZE = 1;
     EMController emController = EMController.create();
     emController.setC1Components(class1Components);
     emController.setC2Components(class2Components);
@@ -120,6 +121,7 @@ public class Main {
                 + target.getMutantNumber()
                 + target.getMutationOperator()
                 + ". ");
+
         InputStream stderr = executeInstrument.getErrorStream();
         InputStreamReader isr = new InputStreamReader(stderr);
         BufferedReader br = new BufferedReader(isr);
@@ -132,14 +134,16 @@ public class Main {
         br = new BufferedReader(isr);
         while ((line = br.readLine()) != null) ;
         int exitVal2 = executeOInstrument.waitFor();
+
         System.out.print("Process exitValue: " + exitVal1 + " and " + exitVal2);
-        if (exitVal1 == 0 && exitVal2 == 0) System.out.println(". Compiled succeeds");
+        if (exitVal1 == 0 && exitVal2 == 0)
+          System.out.println(". Compiled succeeds");
         else {
           failTargets.add(target);
           System.out.println(". Compiled fails");
         }
       }
-      EMConstants.removeSomeTargetsInRandomTargets(failTargets);
+      EMConstants.removeTargetsInRandomTargets(failTargets);
       System.out.println("All targets: " + EMConstants.getRandomTargets().size());
     } catch (Exception exception) {
       exception.printStackTrace();

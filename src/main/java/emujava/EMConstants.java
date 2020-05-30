@@ -72,7 +72,7 @@ public class EMConstants {
     return RANDOM_TARGETS;
   }
 
-  public static void removeSomeTargetsInRandomTargets(Collection<Target> targetCollection) {
+  public static void removeTargetsInRandomTargets(Collection<Target> targetCollection) {
     RANDOM_TARGETS.removeAll(targetCollection);
   }
 
@@ -118,7 +118,7 @@ public class EMConstants {
 
   private static void makeRandomTargets() {
     if (RANDOM_TARGETS.isEmpty()) {
-      EMConstants.RANDOM_TARGETS = getRandomTargets(7);
+      EMConstants.RANDOM_TARGETS = getRandomTargets(2);
       //deleteRemainingTargets();
     }
   }

@@ -27,16 +27,16 @@ public class MyAlgorithm {
 
   public int threadNumber;
 
-  private ArrayList<TestCase> population;
+  private final ArrayList<TestCase> population;
 
   private int traceCount, iterationNumber, traceNumber;
 
   public MyAlgorithm() {
-    population = new ArrayList<TestCase>();
-    selectedPopulation = new ArrayList<TestCase>();
+    population = new ArrayList<>();
+    selectedPopulation = new ArrayList<>();
     traceCount = 1;
     iterationNumber = 0;
-  } //END GeneticAlgorithm() CONSTRUCTOR
+  }
 
   public void setTarget(Target _t) {
     target = _t;
@@ -51,16 +51,18 @@ public class MyAlgorithm {
   }
 
   public void executeCA() {
-    for (int i = 1; i <= EMConstants.MAX_ITERATIONS; i++) {
-      this.generateTestCaseFor(target);
-      this.executeTestCases(target);
-      this.evaluateTestCases(target);
-      if (target.getAchieved()) {
-        EMConstants.ACHIEVED_TARGETS.add(target);
-        EMConstants.EFFECTIVE_TESTCASES.add(target.getTestCase());
-        break;
-      }
-    }
+    this.generateTestCaseFor(target);
+    System.out.println(this.population.get(0).toString());
+//    for (int i = 1; i <= EMConstants.MAX_ITERATIONS; i++) {
+//      this.generateTestCaseFor(target);
+//      this.executeTestCases(target);
+//      this.evaluateTestCases(target);
+//      if (target.getAchieved()) {
+//        EMConstants.ACHIEVED_TARGETS.add(target);
+//        EMConstants.EFFECTIVE_TESTCASES.add(target.getTestCase());
+//        break;
+//      }
+//    }
   }
 
 
