@@ -53,6 +53,7 @@ public class MyAlgorithm {
   public void executeCA() {
     this.generateTestCaseFor(target);
     System.out.println(this.population.get(0).toString());
+    this.executeTestCases(target);
 //    for (int i = 1; i <= EMConstants.MAX_ITERATIONS; i++) {
 //      this.generateTestCaseFor(target);
 //      this.executeTestCases(target);
