@@ -9,6 +9,7 @@ import java.io.FileReader;
 import java.io.LineNumberReader;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 /**
@@ -46,8 +47,6 @@ public class MyAlgorithm {
   }
 
   public void run() {
-    System.out.println("Run on MyAlgorithm's run function " +
-            "with Running threads number = " + threadNumber);
     this.executeCA();
   }
 
@@ -210,10 +209,10 @@ public class MyAlgorithm {
                     ivalue += 97;
                   } else {
                     ivalue += 48;
-                  } //END if-else STATEMENT
+                  }
                   char ch = (char) ivalue;
                   value.append(ch);
-                } //END for LOOP
+                }
                 value.append("\"");
                 solution.append(value);
                 break;
@@ -224,17 +223,17 @@ public class MyAlgorithm {
             if (token.getToken().equals(",")) {
               solution.append(",");
               token = (Token) mTokens.get(mt++);
-            } //END if STATEMENT
-          } //END while LOOP
+            }
+          }
           solution.append("); ");
-        } //END if STATEMENT
-      } //END for LOOP
+        }
+      }
 
       if (c2Components != null) {
         methodCallSeqCount = (int) (Math.random() * (EMConstants.METHOD_CLASS_SEQUENCE_COUNT / 2));
         if (methodCallSeqCount <= 1) {
           methodCallSeqCount += 2;
-        } //END if STATEMENT
+        }
         for (int m = 1; m <= methodCallSeqCount; m++) {
           int methodNumber = (int) (Math.random() * c2Components.getMMList().size());
           MemberMethod mMethod = (MemberMethod) c2Components.getMMList().get(methodNumber);
@@ -262,7 +261,7 @@ public class MyAlgorithm {
                 int signRandom = (int) (Math.random() * 100);
                 if (signRandom % 5 == 0) {
                   value = value * -1;
-                } //END if STATEMENT
+                }
                 solution.append(value);
                 break;
               }
@@ -278,7 +277,7 @@ public class MyAlgorithm {
                 int signRandom = (int) (Math.random() * 100);
                 if (signRandom % 5 == 0) {
                   value1 = value1 * -1;
-                } //END if STATEMENT
+                }
                 solution.append(value1).append(".").append(value2);
                 break;
               }
@@ -289,14 +288,14 @@ public class MyAlgorithm {
                   value += 65;
                 } else {
                   value += 97;
-                } //END if-else STATEMENT
+                }
                 char ch = (char) value;
                 solution.append("\'").append(ch).append("\'");
                 break;
               }
               case "String": {
                 int len = (int) (Math.random() * 10);
-                String value = "\"";
+                StringBuilder value = new StringBuilder("\"");
                 for (int l = 0; l < len; l++) {
                   int ivalue = (int) (Math.random() * 26);
                   int tvalue = (int) (Math.random() * 3);
@@ -306,11 +305,11 @@ public class MyAlgorithm {
                     ivalue += 97;
                   } else {
                     ivalue += 48;
-                  } //END if-else STATEMENT
+                  }
                   char ch = (char) ivalue;
-                  value += ch;
-                } //END for LOOP
-                value += "\"";
+                  value.append(ch);
+                }
+                value.append("\"");
                 solution.append(value);
                 break;
               }
@@ -320,11 +319,11 @@ public class MyAlgorithm {
             if (token.getToken().equals(",")) {
               solution.append(",");
               token = (Token) mTokens.get(mt++);
-            } //END if STATEMENT
-          } //END while LOOP
+            }
+          }
           solution.append("); ");
-        } //END for LOOP
-      } //END if STATEMENT
+        }
+      }
 
       ArrayList<MemberMethod> mmList = cComponents.getMMList();
       for (MemberMethod mMethod : mmList) {
@@ -353,7 +352,7 @@ public class MyAlgorithm {
                 int signRandom = (int) (Math.random() * 100);
                 if (signRandom % 5 == 0) {
                   value = value * -1;
-                } //END if STATEMENT
+                }
                 solution.append(value);
                 break;
               }
@@ -369,7 +368,7 @@ public class MyAlgorithm {
                 int signRandom = (int) (Math.random() * 100);
                 if (signRandom % 5 == 0) {
                   value1 = value1 * -1;
-                } //END if STATEMENT
+                }
                 solution.append(value1).append(".").append(value2);
                 break;
               }
@@ -380,7 +379,7 @@ public class MyAlgorithm {
                   value += 65;
                 } else {
                   value += 97;
-                } //END if-else STATEMENT
+                }
                 char ch = (char) value;
                 solution.append("\'").append(ch).append("\'");
                 break;
@@ -397,10 +396,10 @@ public class MyAlgorithm {
                     ivalue += 97;
                   } else {
                     ivalue += 48;
-                  } //END if-else STATEMENT
+                  }
                   char ch = (char) ivalue;
                   value += ch;
-                } //END for LOOP
+                }
                 value += "\"";
                 solution.append(value);
                 break;
@@ -411,15 +410,15 @@ public class MyAlgorithm {
             if (token.getToken().equals(",")) {
               solution.append(",");
               token = (Token) mTokens.get(mt++);
-            } //END if STATEMENT
-          } //END while LOOP
+            }
+          }
           solution.append(");");
           break;
-        } //END if STATEMENT
-      } //NED for LOOP
+        }
+      }
       testCase.setTestCase(solution.toString());
       this.population.add(testCase);
-    } //END for LOOP
+    }
   }
 
   public void executeTestCases(Target target) {
@@ -469,7 +468,6 @@ public class MyAlgorithm {
 
           this.traceCount++;
         } //END for LOOP
-        Thread.sleep(500);
       } //END for LOOP
 
       String TempITraceFile = EMConstants.PROJECT_LOCATION + EMConstants.PROJECT_NAME + "/traces/" + this.threadNumber + "-" + this.traceCount + "Itrace.txt";
@@ -493,8 +491,8 @@ public class MyAlgorithm {
       e.printStackTrace();
     } //END try-catch BLOCK
 
-    int testCasesGen = Integer.parseInt(TestCaseAnalysis.jLabel11.getText().trim()) + this.population.size();
-    TestCaseAnalysis.jLabel11.setText("" + testCasesGen);
+//    int testCasesGen = Integer.parseInt(TestCaseAnalysis.jLabel11.getText().trim()) + this.population.size();
+//    TestCaseAnalysis.jLabel11.setText("" + testCasesGen);
   }
 
   public String[] breakTestCase(String tc) {
@@ -589,7 +587,7 @@ public class MyAlgorithm {
                     } //END if STATEMENT
                     lineI = lnrI.readLine();
                   } while (lineI != null && !lineI.startsWith("S: "));
-                  ArrayList listI = new ArrayList();
+                  ArrayList<String> listI = new ArrayList<String>();
                   while (lineI != null) {
                     if (!lineI.equals("")) {
                       listI.add(lineI);
@@ -629,11 +627,10 @@ public class MyAlgorithm {
                             isAlive = false;
                           }//END if STATEMENT
                         } //END for LOOP
+                        testCase.setSufficiencyCost(suff_cost + "");
                         if (isAlive) {
-                          testCase.setSufficiencyCost(suff_cost + "");
                           testCase.setStatus("Normal");
                         } else {
-                          testCase.setSufficiencyCost(suff_cost + "");
                           testCase.setStatus("Suspicious");
                           testCase.setWeight(testCase.getWeight() + 1.0);
                           target.setSuspicious(true);
@@ -664,9 +661,13 @@ public class MyAlgorithm {
                         testCase.setWeight(testCase.getWeight() + 1.0);
                         target.setSuspicious(true);
                       } //END if-else STATEMENT
-                      testCase.setWeight(testCase.getWeight() - (testCase.getApproachLevel() + testCase.getLocalFitness() + testCase.getStateFitness()));
-                      EMuJava.jTextArea2.append("\nFITNESS: [(" + testCase.getStateFitness() + ", [" + testCase.getApproachLevel() + ", " + testCase.getLocalFitness() + "]) ; " + testCase.getNecessityCost() + "; (" + testCase.getSufficiencyCost() + ", " + testCase.getStatus() + ")]");
-                      EMuJava.jTextArea2.append("\nWEIGHT: " + testCase.getWeight() + "\n\n");
+                      testCase.setWeight(testCase.getWeight()
+                              - (testCase.getApproachLevel()
+                              + testCase.getLocalFitness()
+                              + testCase.getStateFitness())
+                      );
+//                      EMuJava.jTextArea2.append("\nFITNESS: [(" + testCase.getStateFitness() + ", [" + testCase.getApproachLevel() + ", " + testCase.getLocalFitness() + "]) ; " + testCase.getNecessityCost() + "; (" + testCase.getSufficiencyCost() + ", " + testCase.getStatus() + ")]");
+//                      EMuJava.jTextArea2.append("\nWEIGHT: " + testCase.getWeight() + "\n\n");
                     } else {
                       testCase.setSufficiencyCost("0");
                       testCase.setWeight(testCase.getWeight() + 1.0);
@@ -753,25 +754,29 @@ public class MyAlgorithm {
               testCase.setNecessityCost("c");
               testCase.setSufficiencyCost("c");
               testCase.setStatus("Normal");
-              testCase.setWeight(testCase.getWeight() - (testCase.getApproachLevel() + testCase.getLocalFitness() + testCase.getStateFitness()));
-              EMuJava.jTextArea2.append("\nFITNESS: [(" + testCase.getStateFitness() + ", [" + testCase.getApproachLevel() + ", " + testCase.getLocalFitness() + "]) ; c ; (c, Normal)]");
-              EMuJava.jTextArea2.append("\nWEIGHT: " + testCase.getWeight() + "\n\n");
+              testCase.setWeight(testCase.getWeight()
+                      - (testCase.getApproachLevel()
+                      + testCase.getLocalFitness()
+                      + testCase.getStateFitness())
+              );
+//              EMuJava.jTextArea2.append("\nFITNESS: [(" + testCase.getStateFitness() + ", [" + testCase.getApproachLevel() + ", " + testCase.getLocalFitness() + "]) ; c ; (c, Normal)]");
+//              EMuJava.jTextArea2.append("\nWEIGHT: " + testCase.getWeight() + "\n\n");
             } //END if-else STATEMENT
           } else {
-            EMuJava.jTextArea2.append("Test Case# " + (t + 1) + "\n");
-            EMuJava.jTextArea2.append(((TestCase) this.population.get(t)).toString());
-            EMuJava.jTextArea2.append("\nFITNESS: Cannot be Calculated!");
+//            EMuJava.jTextArea2.append("Test Case# " + (t + 1) + "\n");
+//            EMuJava.jTextArea2.append(((TestCase) this.population.get(t)).toString());
+//            EMuJava.jTextArea2.append("\nFITNESS: Cannot be Calculated!");
             testCase.setWeight(-10.0);
-            EMuJava.jTextArea2.append("\nWEIGHT: -10.0\n\n");
+//            EMuJava.jTextArea2.append("\nWEIGHT: -10.0\n\n");
           } //END if-else LOOP
         } else {
-          EMuJava.jTextArea2.append("Test Case# " + (t + 1) + "\n");
-          EMuJava.jTextArea2.append(((TestCase) this.population.get(t)).toString());
-          EMuJava.jTextArea2.append("\nFITNESS: Cannot be Calculated!");
+//          EMuJava.jTextArea2.append("Test Case# " + (t + 1) + "\n");
+//          EMuJava.jTextArea2.append(((TestCase) this.population.get(t)).toString());
+//          EMuJava.jTextArea2.append("\nFITNESS: Cannot be Calculated!");
           testCase.setWeight(-10.0);
-          EMuJava.jTextArea2.append("\nWEIGHT: -10.0\n\n");
-        } //END if-else STATEMENT
-      } //END for LOOP
+//          EMuJava.jTextArea2.append("\nWEIGHT: -10.0\n\n");
+        }
+      }
     } catch (Exception e) {
       e.printStackTrace();
     } //END try-catch BLOCK
@@ -780,14 +785,14 @@ public class MyAlgorithm {
     try {
       File traceDir = new File(EMConstants.PROJECT_LOCATION + EMConstants.PROJECT_NAME + "/traces/");
       File[] traceFiles = traceDir.listFiles();
-      for (int t = 0; t < traceFiles.length; t++) {
-        if (traceFiles[t].exists()) {
-          traceFiles[t].delete();
-        } //END if STATEMENT
-      } //END for LOOP
+      for (File traceFile : Objects.requireNonNull(traceFiles)) {
+        if (traceFile.exists()) {
+          traceFile.delete();
+        }
+      }
     } catch (Exception exception) {
       exception.printStackTrace();
-    } //END try-catch BLOCK
+    }
   }
 
   public String retrieveMethodUnderTest(String target) {
@@ -818,4 +823,4 @@ public class MyAlgorithm {
     } while (ch != '(');
     return methodName;
   }
-} //END GeneticAlgorithm CLASS
+}

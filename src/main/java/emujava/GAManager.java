@@ -28,7 +28,7 @@ public class GAManager extends Thread {
                     MyAlgorithm ga = new MyAlgorithm();
                     ga.setTarget(target);
                     ga.setThreadNumber(threadNumber++);
-                    ga.start();
+                    //ga.start();
                 } else {
                     ClassicGeneticAlgorithm cga = new ClassicGeneticAlgorithm();
                     cga.setGATarget(target);
