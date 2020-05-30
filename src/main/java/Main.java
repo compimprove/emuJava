@@ -52,6 +52,11 @@ public class Main {
     return c1Components;
   }
 
+  private static void generateTestCase() {
+    EMConstants.MAX_ITERATIONS = 5;
+    CA_MANAGER.run();
+  }
+
   private static void generateMutants(ClassComponents class1Components,
                                       ClassComponents class2Components,
                                       int numberOfClass) {
@@ -116,11 +121,6 @@ public class Main {
     } catch (Exception exception) {
       exception.printStackTrace();
     }
-  }
-
-  private static void generateTestCase() {
-    EMConstants.MAX_ITERATIONS = 5;
-    CA_MANAGER.run();
   }
 
 

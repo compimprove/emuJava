@@ -49,44 +49,18 @@ public class MyAlgorithm {
     System.out.println("Run on MyAlgorithm's run function " +
             "with Running threads number = " + threadNumber);
     this.executeCA();
-    CAManager.RUNNING_THREADS--;
   }
 
-  //This GA gives all the targets equal number of attempts as number of input iterations by user
   public void executeCA() {
     for (int i = 1; i <= EMConstants.MAX_ITERATIONS; i++) {
       this.generateTestCaseFor(target);
-//            ProcessProgress.getProcessProgress().titleLabel.setText("Executing Genetic Algorithm...Target: " + gaTarget.getMutationOperator() + "-" + gaTarget.getMutantNumber() + ", Iteration: " + (EMConstants.ITERATIONS_PERFORMED + 1) + "/" + EMConstants.TOTAL_ITERATIONS);
-      EMConstants.CURRENT_PROGRESS += EMConstants.PROGRESS_RATE;
-      int currentValue = (int) EMConstants.CURRENT_PROGRESS;
-//            ProcessProgress.getProcessProgress().ppBar.setValue(currentValue);
-//            EMuJava.jTextArea2.append("******************************\n");
-//            EMuJava.jTextArea2.append("TARGET: " + gaTarget.getMutationOperator() + "-" + gaTarget.getMutantNumber() + " -- ITERATION: " + i + "\n");
-//            EMuJava.jTextArea2.append("******************************\n");
-//            ProcessProgress.getProcessProgress().statusLabel.setText("Generating population of test case...");
       this.executeTestCases(target);
-//            ProcessProgress.getProcessProgress().statusLabel.setText("Executing test cases...");
       this.evaluateTestCases(target);
-//            ProcessProgress.getProcessProgress().statusLabel.setText("Evaluating test cases...");
-      EMConstants.ITERATIONS_PERFORMED++;
-      this.iterationNumber++;
       if (target.getAchieved()) {
+        EMConstants.ACHIEVED_TARGETS.add(target);
+        EMConstants.EFFECTIVE_TESTCASES.add(target.getTestCase());
         break;
-      } else {
-//        if (i % EMConstants.MUTATION_RATE == 0) {
-//                    this.mutatePopulation();
-//                    ProcessProgress.getProcessProgress().statusLabel.setText("Mutating test cases...");
-//        } else {
-//                    this.performTournamentSelection();
-//                    this.crossoverPopulation();
-//                    ProcessProgress.getProcessProgress().statusLabel.setText("Regenerating new test cases with corssover...");
       }
-    }
-
-
-    // GIVE UP
-    if (!target.getAchieved()) {
-      CAManager.targetNumber++;
     }
   }
 

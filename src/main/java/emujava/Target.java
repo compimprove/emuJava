@@ -30,7 +30,7 @@ public class Target {
 
     public void setMutationOperator( String mo ) {
         mutationOperator = mo;
-    } //END setMutationOperator() METHOD
+    }
     
     public String getMutationOperator() {
         return mutationOperator;

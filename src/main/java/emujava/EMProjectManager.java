@@ -499,35 +499,8 @@ public class EMProjectManager extends Thread {
                 target.getMutationOperator() +
                 " has been compiled");
       }
-//      File[] instrumDirs = instrumentDir.listFiles();
-//      for (File instrumMutant : instrumDirs) {
-//        File[] instrumMutants = instrumMutant.listFiles();
-//        for (File mutant : instrumMutants) {
-//          String mutantPath = mutant.getAbsolutePath();
-//          Runtime.getRuntime().exec("javac " + mutantPath + "\\*.java");
-//          Thread.sleep(1000);
-//        }
-//      }
     } catch (Exception exception) {
       exception.printStackTrace();
     }
-//    try {
-//      File instrumDir =
-//              new File(EMConstants.PROJECT_LOCATION
-//                      + EMConstants.PROJECT_NAME
-//                      + "/oinstrument");
-//      File[] instrumDirs = instrumDir.listFiles();
-//      for (File instrumMutant : instrumDirs) {
-//        File[] instrumMutants = instrumMutant.listFiles();
-//        for (File mutant : instrumMutants) {
-//          String mutantPath = mutant.getAbsolutePath();
-//          Runtime.getRuntime().exec("javac " + mutantPath + "\\*.java");
-//          Thread.sleep(1000);
-//        }
-//      }
-//    } catch (Exception exception) {
-//      exception.printStackTrace();
-//    }
   }
-
-} 
+}
