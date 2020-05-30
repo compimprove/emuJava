@@ -72,6 +72,10 @@ public class EMConstants {
     return RANDOM_TARGETS;
   }
 
+  public static void removeSomeTargetsInRandomTargets(Collection<Target> targetCollection) {
+    RANDOM_TARGETS.removeAll(targetCollection);
+  }
+
   private static ArrayList<Target> RANDOM_TARGETS = new ArrayList<Target>();
 
   private static Map<String, ArrayList<Target>> getDividedTargets() {
@@ -92,11 +96,11 @@ public class EMConstants {
     Set<Map.Entry<String, ArrayList<Target>>> set = dividedTargets.entrySet();
 
     for (Map.Entry<String, ArrayList<Target>> operator : set) {
-      if (operator.getValue().size() >= maxChoiceEachOperator - 2) {
+      if (operator.getValue().size() >= maxChoiceEachOperator) {
         int targetsSizeOfThisOperator = operator.getValue().size();
         Set<Integer> randomInteger = new HashSet<Integer>();
 
-        for (int i = 0; i < maxChoiceEachOperator; i++) {
+        for (int i = 0; randomInteger.size() < maxChoiceEachOperator; i++) {
           int randomIndex = generator.nextInt(targetsSizeOfThisOperator);
           randomInteger.add(randomIndex);
         }
@@ -114,7 +118,7 @@ public class EMConstants {
 
   private static void makeRandomTargets() {
     if (RANDOM_TARGETS.isEmpty()) {
-      EMConstants.RANDOM_TARGETS = getRandomTargets(5);
+      EMConstants.RANDOM_TARGETS = getRandomTargets(7);
       //deleteRemainingTargets();
     }
   }

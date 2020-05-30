@@ -1,6 +1,9 @@
 import emujava.*;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -62,11 +65,11 @@ public class Main {
                                       int numberOfClass) {
     MySourceCode sourceCode = new MySourceCode();
     EMProjectManager projectManager = new EMProjectManager();
-    EMController emController = EMController.create();
-    emController.setC1Components(class1Components);
     EMConstants.PROJECT_LOCATION = PROJECT_LOCATION;
     EMConstants.PROJECT_NAME = PROJECT_NAME;
     EMConstants.CLASS_1 = CLASS1_NAME;
+    EMController emController = EMController.create();
+    emController.setC1Components(class1Components);
     emController.setC2Components(class2Components);
     EMConstants.MUTATION_OPERATORS.addAll(mutationOperators);
     for (MemberMethod memberMethod : class1Components.getMMList()) {
@@ -97,27 +100,47 @@ public class Main {
               + EMConstants.PROJECT_NAME + "/instrument");
       File oInstrumentDir = new File(EMConstants.PROJECT_LOCATION
               + EMConstants.PROJECT_NAME + "/oinstrument");
+      ArrayList<Target> failTargets = new ArrayList<Target>();
 
       for (Target target : randomTargets) {
-        Runtime.getRuntime().exec(
+        Process executeInstrument = Runtime.getRuntime().exec(
                 "javac "
                         + instrumentDir.getAbsolutePath()
                         + "\\" + target.getMutationOperator()
                         + "\\" + target.getMutantNumber()
                         + "\\*.java");
-        Thread.sleep(500);
-        Runtime.getRuntime().exec(
+        Process executeOInstrument = Runtime.getRuntime().exec(
                 "javac "
                         + oInstrumentDir.getAbsolutePath()
                         + "\\" + target.getMutationOperator()
                         + "\\" + target.getMutantNumber()
                         + "\\*.java");
-        Thread.sleep(500);
-        System.out.println("Mutant " +
-                target.getMutantNumber() +
-                target.getMutationOperator() +
-                " has been compiled");
+
+        System.out.print("Mutant "
+                + target.getMutantNumber()
+                + target.getMutationOperator()
+                + ". ");
+        InputStream stderr = executeInstrument.getErrorStream();
+        InputStreamReader isr = new InputStreamReader(stderr);
+        BufferedReader br = new BufferedReader(isr);
+        String line = null;
+        while ((line = br.readLine()) != null) ;
+        int exitVal1 = executeInstrument.waitFor();
+
+        stderr = executeOInstrument.getErrorStream();
+        isr = new InputStreamReader(stderr);
+        br = new BufferedReader(isr);
+        while ((line = br.readLine()) != null) ;
+        int exitVal2 = executeOInstrument.waitFor();
+        System.out.print("Process exitValue: " + exitVal1 + " and " + exitVal2);
+        if (exitVal1 == 0 && exitVal2 == 0) System.out.println(". Compiled succeeds");
+        else {
+          failTargets.add(target);
+          System.out.println(". Compiled fails");
+        }
       }
+      EMConstants.removeSomeTargetsInRandomTargets(failTargets);
+      System.out.println("All targets: " + EMConstants.getRandomTargets().size());
     } catch (Exception exception) {
       exception.printStackTrace();
     }
