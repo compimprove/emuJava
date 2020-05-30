@@ -17,7 +17,8 @@ public class CAManager extends Thread {
 
     public void run() {
         EMConstants.TIME_START = System.currentTimeMillis();
-        ArrayList<Target> allTargets = EMConstants.getRandomTargets(5);
+        ArrayList<Target> allTargets =
+                EMConstants.getRandomTargets(5);
         int threadNumber = 1;
         EMConstants.TOTAL_ITERATIONS
                 = EMConstants.MAX_ITERATIONS * allTargets.size();
