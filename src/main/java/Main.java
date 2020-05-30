@@ -3,6 +3,7 @@ import emujava.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+
 import org.apache.commons.io.FileUtils;
 
 public class Main {
@@ -26,11 +27,9 @@ public class Main {
     createProject();
     ClassComponents class1Components = scanSourceCode(ClASS1_SOURCE);
     ClassComponents class2Components = scanSourceCode(ClASS2_SOURCE);
-
     generateMutants(class1Components, class2Components, 1);
     //generateTestCase();
   }
-
 
   private static ClassComponents scanSourceCode(String class_source) {
     EMScanner scan = new EMScanner(
@@ -80,14 +79,43 @@ public class Main {
       sourceCode.generateMutants(1);
     }
     sourceCode.instrumentAndTransformCode();
-    projectManager.compileProject();
-    try {
-      Thread.sleep(500);
-    } catch (
-            Exception e) {
-      e.printStackTrace();
-    }
+    System.out.println("-------------------");
+    compileProject();
+    System.out.println("-------------------");
+    System.out.println("DONE");
+  }
 
+  private static void compileProject() {
+    try {
+      ArrayList<Target> randomTargets = EMConstants.getRandomTargets();
+      File instrumentDir = new File(EMConstants.PROJECT_LOCATION
+              + EMConstants.PROJECT_NAME + "/instrument");
+      File oInstrumentDir = new File(EMConstants.PROJECT_LOCATION
+              + EMConstants.PROJECT_NAME + "/oinstrument");
+
+      for (Target target : randomTargets) {
+        Runtime.getRuntime().exec(
+                "javac "
+                        + instrumentDir.getAbsolutePath()
+                        + "\\" + target.getMutationOperator()
+                        + "\\" + target.getMutantNumber()
+                        + "\\*.java");
+        Thread.sleep(500);
+        Runtime.getRuntime().exec(
+                "javac "
+                        + oInstrumentDir.getAbsolutePath()
+                        + "\\" + target.getMutationOperator()
+                        + "\\" + target.getMutantNumber()
+                        + "\\*.java");
+        Thread.sleep(500);
+        System.out.println("Mutant " +
+                target.getMutantNumber() +
+                target.getMutationOperator() +
+                " has been compiled");
+      }
+    } catch (Exception exception) {
+      exception.printStackTrace();
+    }
   }
 
   private static void generateTestCase() {
@@ -120,6 +148,12 @@ public class Main {
     result = projectDirs.mkdir() && result;
     projectDirs = new File(projectDir.getAbsolutePath() + "/traces");
     result = projectDirs.mkdir() && result;
+//    projectDirs = new File(projectDir.getAbsolutePath() + "/temps");
+//    result = projectDirs.mkdir() && result;
+//    projectDirs = new File(projectDir.getAbsolutePath() + "/temps/instrument");
+//    result = projectDirs.mkdir() && result;
+//    projectDirs = new File(projectDir.getAbsolutePath() + "/temps/oinstrument");
+//    result = projectDirs.mkdir() && result;
 
     if (!result) {
       throw new Exception("Create Project has errors");

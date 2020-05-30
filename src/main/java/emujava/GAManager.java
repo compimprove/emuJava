@@ -16,13 +16,13 @@ public class GAManager extends Thread {
     public void run() {
         EMConstants.TIME_START = System.currentTimeMillis();
         int threadNumber = 1;
-        EMConstants.TOTAL_ITERATIONS = EMConstants.MAX_ITERATIONS * EMConstants.TARGETS.size();
+        EMConstants.TOTAL_ITERATIONS = EMConstants.MAX_ITERATIONS * EMConstants.ALL_TARGETS.size();
         EMConstants.PROGRESS_RATE = 45 / (double) EMConstants.TOTAL_ITERATIONS;
-        for (; T < EMConstants.TARGETS.size(); ) {
+        for (; T < EMConstants.ALL_TARGETS.size(); ) {
             while (GAManager.RUNNING_THREADS < EMConstants.GA_MAX_THREADS
-                    && T < EMConstants.TARGETS.size()) {
+                    && T < EMConstants.ALL_TARGETS.size()) {
                 EMController.create().getProjectManager().updateStatisticsAndResults();
-                Target target = (Target) EMConstants.TARGETS.get(T);
+                Target target = (Target) EMConstants.ALL_TARGETS.get(T);
                 if (EMConstants.GEN_TYPE.contains("eMuJava") || EMConstants.GEN_TYPE.contains("Random")) {
                     // project will go to this branch
                     MyAlgorithm ga = new MyAlgorithm();

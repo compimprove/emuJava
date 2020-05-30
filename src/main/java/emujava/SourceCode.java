@@ -66,7 +66,7 @@ public class SourceCode {
                                         Target target = new Target();
                                         target.setMutationOperator("ROR");
                                         target.setMutantNumber(mutantNumber);
-                                        EMConstants.TARGETS.add(target);
+                                        EMConstants.ALL_TARGETS.add(target);
                                         mutantNumber++;
                                         EMConstants.TOTAL_MUTANTS++;
                                     } //END for LOOP
@@ -84,7 +84,7 @@ public class SourceCode {
                                     Target target = new Target();
                                     target.setMutationOperator("ROR");
                                     target.setMutantNumber(mutantNumber);
-                                    EMConstants.TARGETS.add(target);
+                                    EMConstants.ALL_TARGETS.add(target);
                                     mutantNumber++;
                                     EMConstants.TOTAL_MUTANTS++;
                                 } //END for LOOP
@@ -127,7 +127,7 @@ public class SourceCode {
                                 Target target = new Target();
                                 target.setMutationOperator("AOR");
                                 target.setMutantNumber(mutantNumber);
-                                EMConstants.TARGETS.add(target);
+                                EMConstants.ALL_TARGETS.add(target);
                                 mutantNumber++;
                                 EMConstants.TOTAL_MUTANTS++;
                             } //END for LOOP
@@ -165,7 +165,7 @@ public class SourceCode {
                             Target target = new Target();
                             target.setMutationOperator("LCR");
                             target.setMutantNumber(mutantNumber);
-                            EMConstants.TARGETS.add(target);
+                            EMConstants.ALL_TARGETS.add(target);
                             mutantNumber++;
                             EMConstants.TOTAL_MUTANTS++;
                         } else {
@@ -213,7 +213,7 @@ public class SourceCode {
                                         Target target = new Target();
                                         target.setMutationOperator("UOI");
                                         target.setMutantNumber(mutantNumber);
-                                        EMConstants.TARGETS.add(target);
+                                        EMConstants.ALL_TARGETS.add(target);
                                         mutantNumber++;
                                         EMConstants.TOTAL_MUTANTS++;
                                         mutatedToken = mutatedTokenList[mtl];
@@ -222,7 +222,7 @@ public class SourceCode {
                                         Target target2 = new Target();
                                         target2.setMutationOperator("UOI");
                                         target2.setMutantNumber(mutantNumber);
-                                        EMConstants.TARGETS.add(target2);
+                                        EMConstants.ALL_TARGETS.add(target2);
                                         mutantNumber++;
                                         EMConstants.TOTAL_MUTANTS++;
                                     } //END for LOOP
@@ -283,7 +283,7 @@ public class SourceCode {
                             Target target = new Target();
                             target.setMutationOperator("ABS");
                             target.setMutantNumber(mutantNumber);
-                            EMConstants.TARGETS.add(target);
+                            EMConstants.ALL_TARGETS.add(target);
                             tokenNumber = tokenNumber + (tokens.size() - t - 1);
                             mutantNumber++;
                             EMConstants.TOTAL_MUTANTS++;
@@ -336,7 +336,7 @@ public class SourceCode {
                             Target target = new Target();
                             target.setMutationOperator("IOP");
                             target.setMutantNumber(mutantNumber);
-                            EMConstants.TARGETS.add(target);
+                            EMConstants.ALL_TARGETS.add(target);
                             mutantNumber++;
                             EMConstants.TOTAL_MUTANTS++;
                         } //END if STATEMENT
@@ -393,7 +393,7 @@ public class SourceCode {
                                 Target target = new Target();
                                 target.setMutationOperator("PNC");
                                 target.setMutantNumber(mutantNumber);
-                                EMConstants.TARGETS.add(target);
+                                EMConstants.ALL_TARGETS.add(target);
                                 tokenNumber = tokenNumber + (tokens.size() - t);
                                 mutantNumber++;
                                 EMConstants.TOTAL_MUTANTS++;
@@ -441,7 +441,7 @@ public class SourceCode {
                             Target target = new Target();
                             target.setMutationOperator("OMD");
                             target.setMutantNumber(mutantNumber);
-                            EMConstants.TARGETS.add(target);
+                            EMConstants.ALL_TARGETS.add(target);
                             mutantNumber++;
                             EMConstants.TOTAL_MUTANTS++;
                         } //END if STATEMENT
@@ -475,7 +475,7 @@ public class SourceCode {
                             Target target = new Target();
                             target.setMutationOperator("JID");
                             target.setMutantNumber(mutantNumber);
-                            EMConstants.TARGETS.add(target);
+                            EMConstants.ALL_TARGETS.add(target);
                             tokenNumber += tokens.size() - 1;
                             mutantNumber++;
                             EMConstants.TOTAL_MUTANTS++;
@@ -533,7 +533,7 @@ public class SourceCode {
                                 Target target = new Target();
                                 target.setMutationOperator("EOC");
                                 target.setMutantNumber(mutantNumber);
-                                EMConstants.TARGETS.add(target);
+                                EMConstants.ALL_TARGETS.add(target);
                                 tokenNumber += tokens.size();
                                 tempNumber = tokenNumber;
                                 mutantNumber++;

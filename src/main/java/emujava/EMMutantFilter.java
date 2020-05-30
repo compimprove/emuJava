@@ -20,11 +20,11 @@ public class EMMutantFilter extends javax.swing.JFrame implements ItemListener {
     public EMMutantFilter() {
         initComponents();
         
-        JCheckBox[] mutantsBoxes = new JCheckBox[ EMConstants.TARGETS.size() ];
+        JCheckBox[] mutantsBoxes = new JCheckBox[ EMConstants.ALL_TARGETS.size() ];
         int x = 10;
         int y = 50; 
-        for( int i=0; i<EMConstants.TARGETS.size(); i++ ) {
-            Target target = ( Target )EMConstants.TARGETS.get( i );
+        for(int i = 0; i<EMConstants.ALL_TARGETS.size(); i++ ) {
+            Target target = ( Target )EMConstants.ALL_TARGETS.get( i );
             mutantsBoxes[ i ] = new JCheckBox( target.getMutationOperator() + "-" + target.getMutantNumber(), true );
             mutantsBoxes[ i ].setBounds( x, y, 90, 22 );
             mutantsBoxes[ i ].addItemListener( this );
@@ -58,12 +58,12 @@ public class EMMutantFilter extends javax.swing.JFrame implements ItemListener {
             Target target = new Target();
             target.setMutationOperator( operator );
             target.setMutantNumber( number );
-            EMConstants.TARGETS.add( target );
+            EMConstants.ALL_TARGETS.add( target );
         } else {
-            for( int i=0; i<EMConstants.TARGETS.size(); i++ ) {
-                Target target = ( Target )EMConstants.TARGETS.get( i );
+            for(int i = 0; i<EMConstants.ALL_TARGETS.size(); i++ ) {
+                Target target = ( Target )EMConstants.ALL_TARGETS.get( i );
                 if( target.getMutationOperator().equals( operator ) && target.getMutantNumber()==number ) {
-                    EMConstants.TARGETS.remove( i );
+                    EMConstants.ALL_TARGETS.remove( i );
                     break;
                 } //END if STATEMENT
             } //END for LOOP

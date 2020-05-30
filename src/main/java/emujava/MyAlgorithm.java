@@ -82,16 +82,13 @@ public class MyAlgorithm extends Thread {
 //                    ProcessProgress.getProcessProgress().statusLabel.setText("Regenerating new test cases with corssover...");
       }
     }
+
+
+    // GIVE UP
+    if (!target.getAchieved()) {
+      CAManager.targetNumber++;
+    }
   }
-
-  // GIVE UP
-    if(!target.getAchieved())
-
-  {
-    CAManager.targetNumber++;
-  }
-
-}
 
 
   public void generateTestCaseFor(Target target) {
@@ -160,13 +157,15 @@ public class MyAlgorithm extends Thread {
                 .append("(); ");
       }
 
-      int methodCallSeqCount = (int) (Math.random() * EMConstants.METHOD_CLASS_SEQUENCE_COUNT);
+      int methodCallSeqCount =
+              (int) (Math.random() * EMConstants.METHOD_CLASS_SEQUENCE_COUNT);
       if (methodCallSeqCount <= 1) {
         methodCallSeqCount += 2;
-      } //END if STATEMETN
+      }
       for (int m = 1; m <= methodCallSeqCount; m++) {
         int methodNumber = (int) (Math.random() * cComponents.getMMList().size());
-        MemberMethod mMethod = (MemberMethod) cComponents.getMMList().get(methodNumber);
+        MemberMethod mMethod =
+                (MemberMethod) cComponents.getMMList().get(methodNumber);
         if (!mMethod.getMethodName().equals(methodUnderTest)) {
           solution.append(objectName)
                   .append(".")
@@ -193,7 +192,7 @@ public class MyAlgorithm extends Thread {
                 int signRandom = (int) (Math.random() * 100);
                 if (signRandom % 5 == 0) {
                   value = value * -1;
-                } //END if STATEMENT
+                }
                 solution.append(value);
                 break;
               }
@@ -227,7 +226,7 @@ public class MyAlgorithm extends Thread {
               }
               case "String": {
                 int len = (int) (Math.random() * 10);
-                String value = "\"";
+                StringBuilder value = new StringBuilder("\"");
                 for (int l = 0; l < len; l++) {
                   int ivalue = (int) (Math.random() * 26);
                   int tvalue = (int) (Math.random() * 3);
@@ -239,9 +238,9 @@ public class MyAlgorithm extends Thread {
                     ivalue += 48;
                   } //END if-else STATEMENT
                   char ch = (char) ivalue;
-                  value += ch;
+                  value.append(ch);
                 } //END for LOOP
-                value += "\"";
+                value.append("\"");
                 solution.append(value);
                 break;
               }
@@ -702,7 +701,7 @@ public class MyAlgorithm extends Thread {
                       target.setAchieved(true);
                       target.setStatus("Killed");
                       EMConstants.ACHIEVED_TARGETS.add(target);
-                      EMConstants.TARGETS.remove(target);
+                      EMConstants.ALL_TARGETS.remove(target);
                       EMConstants.EFFECTIVE_TESTCASES.add(testCase);
                       testCase.setWeight(testCase.getWeight()
                               - (testCase.getApproachLevel()

@@ -598,7 +598,7 @@ public class ClassicGeneticAlgorithm extends Thread {
                                             target.setAchieved( true );
                                             target.setStatus( "Killed" );
                                             EMConstants.ACHIEVED_TARGETS.add( target );
-                                            EMConstants.TARGETS.remove( target );
+                                            EMConstants.ALL_TARGETS.remove( target );
                                             EMConstants.EFFECTIVE_TESTCASES.add( testCase );
                                             testCase.setWeight( testCase.getWeight()-( testCase.getApproachLevel()+testCase.getLocalFitness() ) );
                                             EMuJava.jTextArea3.append( "TARGET: " + target.getMutationOperator() + "-" + target.getMutantNumber() + ",\tITERATION: " + (EMConstants.ITERATIONS_PERFORMED+1) + "\n" );

@@ -4,6 +4,7 @@
  */
 package emujava;
 
+import java.io.File;
 import java.util.*;
 
 /**
@@ -11,6 +12,7 @@ import java.util.*;
  */
 public class EMConstants {
   private static Random generator = new Random();
+
   public static String PROJECT_NAME = "";
 
   public static String PROJECT_LOCATION = "";
@@ -31,7 +33,7 @@ public class EMConstants {
 
   public static int TOTAL_MUTANTS = 0;
 
-  public static ArrayList<Target> TARGETS = new ArrayList<Target>();
+  public static ArrayList<Target> ALL_TARGETS = new ArrayList<Target>();
 
   public static ArrayList<Target> ACHIEVED_TARGETS = new ArrayList<Target>();
 
@@ -49,7 +51,7 @@ public class EMConstants {
 
   public static String GEN_TYPE = "";
 
-  public static String CLASSPATH = "C:/jBillu/EMuJavaTests/PNC";
+//  public static String CLASSPATH = "C:/jBillu/EMuJavaTests/PNC";
 
   public static int GA_TIMEOUT = 100000;
 
@@ -59,9 +61,18 @@ public class EMConstants {
 
   public static double CURRENT_PROGRESS = 50;
 
+  public static String CLASSPATH = " ";
+
   public static double OLD_POPULATION_RATE = 0.2;
 
   public static int METHOD_CLASS_SEQUENCE_COUNT = 20;
+
+  public static ArrayList<Target> getRandomTargets() {
+    makeRandomTargets();
+    return RANDOM_TARGETS;
+  }
+
+  private static ArrayList<Target> RANDOM_TARGETS = new ArrayList<Target>();
 
   private static Map<String, ArrayList<Target>> getDividedTargets() {
     Map<String, ArrayList<Target>> dividedTargets
@@ -69,27 +80,61 @@ public class EMConstants {
     for (String operator : MUTATION_OPERATORS) {
       dividedTargets.put(operator, new ArrayList<Target>());
     }
-    for (Target target : TARGETS) {
+    for (Target target : ALL_TARGETS) {
       dividedTargets.get(target.getMutationOperator()).add(target);
     }
     return dividedTargets;
   }
 
-  public static ArrayList<Target> getRandomTargets(int maxChoiceEachOperator) {
+  private static ArrayList<Target> getRandomTargets(int maxChoiceEachOperator) {
     Map<String, ArrayList<Target>> dividedTargets = getDividedTargets();
     ArrayList<Target> randomTargets = new ArrayList<Target>();
     Set<Map.Entry<String, ArrayList<Target>>> set = dividedTargets.entrySet();
 
     for (Map.Entry<String, ArrayList<Target>> operator : set) {
-      if (!operator.getValue().isEmpty()) {
+      if (operator.getValue().size() >= maxChoiceEachOperator - 2) {
         int targetsSizeOfThisOperator = operator.getValue().size();
+        Set<Integer> randomInteger = new HashSet<Integer>();
+
         for (int i = 0; i < maxChoiceEachOperator; i++) {
           int randomIndex = generator.nextInt(targetsSizeOfThisOperator);
-          randomTargets.add(operator.getValue().get(randomIndex));
+          randomInteger.add(randomIndex);
         }
+
+        for (int i : randomInteger) {
+          randomTargets.add(operator.getValue().get(i));
+        }
+
+      } else if (!operator.getValue().isEmpty()) {
+        randomTargets.addAll(operator.getValue());
       }
     }
     return randomTargets;
+  }
+
+  private static void makeRandomTargets() {
+    if (RANDOM_TARGETS.isEmpty()) {
+      EMConstants.RANDOM_TARGETS = getRandomTargets(5);
+      //deleteRemainingTargets();
+    }
+  }
+
+  private static void deleteRemainingTargets() {
+    deleteInInstrumentDir();
+    deleteInOInstrumentDir();
+  }
+
+  private static void deleteInInstrumentDir() {
+    File instrumentDir = new File(EMConstants.PROJECT_LOCATION
+            + EMConstants.PROJECT_NAME + "/instrument");
+  }
+
+  private static void deleteInOInstrumentDir() {
+    File oInstrumentDir = new File(EMConstants.PROJECT_LOCATION
+            + EMConstants.PROJECT_NAME + "/oinstrument");
+    for (Target target : RANDOM_TARGETS) {
+
+    }
   }
 
   public void print() {
