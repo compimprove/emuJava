@@ -16,7 +16,7 @@ import java.util.StringTokenizer;
  * @version 1.0 October 20, 2013
  */
 
-public class MyAlgorithm extends Thread {
+public class MyAlgorithm {
 
   private ArrayList<TestCase> selectedPopulation;
 

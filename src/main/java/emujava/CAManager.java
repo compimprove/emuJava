@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * @author jBillu
  * @version 1.0 August 20, 2015
  */
-public class CAManager extends Thread {
+public class CAManager {
 
   public static int targetNumber = 0;
   public static int RUNNING_THREADS = 0;
@@ -23,20 +23,13 @@ public class CAManager extends Thread {
             = EMConstants.MAX_ITERATIONS * randomTargets.size();
 //        EMConstants.PROGRESS_RATE = 45 / (double) EMConstants.TOTAL_ITERATIONS;
     while (targetNumber < randomTargets.size()) {
-      while (CAManager.RUNNING_THREADS < EMConstants.GA_MAX_THREADS
-              && targetNumber < randomTargets.size()) {
-        Target target = randomTargets.get(targetNumber);
-        MyAlgorithm climbingHill = new MyAlgorithm();
-        climbingHill.setTarget(target);
-        climbingHill.setThreadNumber(threadNumber++);
-        climbingHill.start();
-        CAManager.RUNNING_THREADS++;
-      } //END while LOOP
-    } //END for LOOP
-
-    while (CAManager.RUNNING_THREADS > 0) {
+      Target target = randomTargets.get(targetNumber);
+      MyAlgorithm climbingHill = new MyAlgorithm();
+      climbingHill.setTarget(target);
+      climbingHill.setThreadNumber(threadNumber++);
+      climbingHill.run();
+      CAManager.RUNNING_THREADS++;
     }
-
 
     EMConstants.TIME_END = System.currentTimeMillis();
     try {
