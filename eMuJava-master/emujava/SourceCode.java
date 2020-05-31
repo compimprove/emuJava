@@ -1059,8 +1059,10 @@ public class SourceCode {
                     skel = skel.substring(0, skel.length() - 5);
                 tokenNumber = tokenNumber + 1;
                 if (mutationOperator.equals("ABS")) {
+                    System.out.println("abs: "+ skel);
                     int idx =  skel.lastIndexOf('=');
                     skel = skel.substring(0, idx+1) +" "+ mutatedToken;
+                    System.out.println("new: "+ skel);
                 } //END if STATEMENT
                 if (mutationOperator.equals("EOC")) {
                     if (mutatedToken.contains("==")) {
@@ -1070,7 +1072,7 @@ public class SourceCode {
                         skel = skel.substring(0, skel.length() - 6);
                     } //END if-else STATEMENT
                     skel = skel.substring(0, skel.length() - 1);
-                } //END if STATEMENT
+                }; //END if STATEMENT
                 if(mutationOperator.equals("UOI"))
                 {
                  //   System.out.println("old skel:  " +skel);
@@ -1124,7 +1126,7 @@ public class SourceCode {
                     //if(!mutationOperator.equals("UOI"))
                         tokenNumber++;
                 } while (!(mutatedToken.equals(";") || mutatedToken.equals("{")));
-//                System.err.println("dong 1111: "+ skel);
+                System.err.println("dong 1129: "+ skel);
                 if (mutatedToken.equals(";")) {
                     if (skel.endsWith(" ")) {
                         skel = skel.substring(0, skel.length() - 1) + mutatedToken + "\t//Mutated with " + mutationOperator + "\n";
@@ -1140,7 +1142,6 @@ public class SourceCode {
                 } //END if-else STATEMENT
                 if(mutationOperator.equals("UOI"))
                     tokenNumber--;
-
                 for (int mmt = tokenNumber; mmt < mmTokens.size(); mmt++) {
                     Token token = (Token) mmTokens.get(mmt);
 
@@ -1183,11 +1184,11 @@ public class SourceCode {
 
                     } else if (token.getToken().equals("}")) {
                         indentCount--;
-                        System.out.println("skel cũ: " + skel);
+
                         skel = this.removeIndentation(skel, 1);
                         skel = skel + "\n    " + token.getToken() + "\n";
                         skel = this.addIndentation(skel, indentCount);
-                        System.out.println("skel mới: " + skel);
+
                     } else if (token.getToken().equals("{")) {
                         skel = skel + token.getToken() + "\n";
                         indentCount++;
@@ -1205,7 +1206,7 @@ public class SourceCode {
                     //END if-else STATEMENT
                 } //END for LOOP
                 skel = skel + "\n";
-                System.out.println("dong 1206: " + skel);
+
             } else {
                 MemberMethod mMethod = (MemberMethod) mmList.get(mm);
                 int indentCount = 1;
@@ -1268,7 +1269,7 @@ public class SourceCode {
         } //END for LOOP
 
         skel = skel + "\n}";
-//        System.err.println("dong 1268: "+ skel);
+        System.err.println("dong 1268: "+ skel);
         try {
             File file = new File(EMConstants.PROJECT_LOCATION + EMConstants.PROJECT_NAME + "/mutants/" + mutationOperator + "/" + mutantNumber);
             if (!file.exists()) {
@@ -1430,9 +1431,9 @@ public class SourceCode {
                         RandomAccessFile oraf = new RandomAccessFile(oinstDirs.getAbsolutePath() + "/" + ocodeFile.getName(), "rw");
                         String oline = "";
                         if (line.startsWith("//")) {
-                            System.err.print("Line: " + line);
+
                             mutatedMethod = findMutatedMethod(line);
-                            System.err.print("Method: " + mutatedMethod);
+
                             mutatedMethod = findMethodHeader(mutatedMethod, cComponents);
                             do {
                                 if (line.contains(mutatedMethod)) {
@@ -1998,8 +1999,7 @@ public class SourceCode {
                                                     } else if (line.contains("}")) {
                                                         String condition1 = (String) conditions.get(conditions.size() - 1);
                                                         String condition = (String) predicates.get(predicates.size() - 1);
-                                                        System.out.println("CONDITION: " + condition);
-                                                        System.out.println("PREDICATE: " + condition1);
+
                                                         if (condition1.equals("if")) {
                                                             predicates.remove(predicates.size() - 1);
                                                             conditions.remove(conditions.size() - 1);
@@ -2009,7 +2009,7 @@ public class SourceCode {
                                                             tempList.add("}");
                                                             otempList.add("}");
                                                             String whilePredicate = getWhilePredicate(condition);
-                                                            System.out.println("WP: " + whilePredicate);
+
                                                             tempList.add("if( !(" + whilePredicate + ") ) {");
                                                             otempList.add("if( !(" + whilePredicate + ") ) {");
                                                         } else {
