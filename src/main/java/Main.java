@@ -14,7 +14,7 @@ public class Main {
   public static final String PROJECT_NAME = "Test";
   public static final String PROJECT_LOCATION =
           "D:\\compi\\sources\\Java\\emuJava\\Location\\";
-  public static final String CLASS1_NAME = "ElectricHeater.java";
+  public static final String CLASS1_NAME = "Stack.java";
   public static final String ClASS1_SOURCE =
           "D:\\compi\\sources\\Java\\emuJava\\Programs\\" + CLASS1_NAME;
   public static final String CLASS2_NAME = "ElectricHeater.java";
@@ -27,6 +27,7 @@ public class Main {
   public static final CAManager CA_MANAGER = new CAManager();
 
   public static void main(String[] args) throws Exception {
+
     createProject();
     ClassComponents class1Components = scanSourceCode(ClASS1_SOURCE);
     ClassComponents class2Components = scanSourceCode(ClASS2_SOURCE);
@@ -56,7 +57,7 @@ public class Main {
   }
 
   private static void generateTestCase() {
-    EMConstants.MAX_ITERATIONS = 1;
+    EMConstants.MAX_ITERATIONS = 5;
     CA_MANAGER.run();
   }
 
@@ -68,7 +69,7 @@ public class Main {
     EMConstants.PROJECT_LOCATION = PROJECT_LOCATION;
     EMConstants.PROJECT_NAME = PROJECT_NAME;
     EMConstants.CLASS_1 = CLASS1_NAME;
-    EMConstants.POPULATION_SIZE = 1;
+    EMConstants.POPULATION_SIZE = 5;
     EMController emController = EMController.create();
     emController.setC1Components(class1Components);
     emController.setC2Components(class2Components);
@@ -101,7 +102,7 @@ public class Main {
               + EMConstants.PROJECT_NAME + "/instrument");
       File oInstrumentDir = new File(EMConstants.PROJECT_LOCATION
               + EMConstants.PROJECT_NAME + "/oinstrument");
-      ArrayList<Target> failTargets = new ArrayList<Target>();
+      ArrayList<Target> failTargets = new ArrayList<>();
 
       for (Target target : randomTargets) {
         Process executeInstrument = Runtime.getRuntime().exec(

@@ -19,9 +19,9 @@ import java.util.StringTokenizer;
 
 public class MyAlgorithm {
 
-  private ArrayList<TestCase> selectedPopulation;
-
   public static int TS_K = 5;     //This 'K' is for Tournament Selection
+
+  private TestCase testCase;
 
   public Target target;
 
@@ -33,7 +33,6 @@ public class MyAlgorithm {
 
   public MyAlgorithm() {
     population = new ArrayList<>();
-    selectedPopulation = new ArrayList<>();
     traceCount = 1;
     iterationNumber = 0;
   }
@@ -47,21 +46,18 @@ public class MyAlgorithm {
   }
 
   public void run() {
-    this.executeCA();
-  }
-
-  public void executeCA() {
 //    this.generateTestCaseFor(target);
 //    System.out.println(this.population.get(0).toString());
 //    this.executeTestCases(target);
     for (int i = 1; i <= EMConstants.MAX_ITERATIONS; i++) {
       this.generateTestCaseFor(target);
-      System.out.println(this.population.get(0).toString());
-      this.executeTestCases(target);
+      System.out.println(testCase);
+      this.executeTestCases(this.target);
       this.evaluateTestCases(target);
       if (target.getAchieved()) {
         EMConstants.ACHIEVED_TARGETS.add(target);
         EMConstants.EFFECTIVE_TESTCASES.add(target.getTestCase());
+        System.out.println("Kill 1 mutant");
         break;
       }
     }
@@ -96,6 +92,7 @@ public class MyAlgorithm {
               || operator.equals("OMD")
               || operator.equals("JID")
               || operator.equals("ECC")) {
+
         cComponents = EMController.create().getC1Components();
       } else {
         cComponents = EMController.create().getC1Components();
@@ -106,7 +103,7 @@ public class MyAlgorithm {
     }
 
 
-    for (int p = this.population.size(); p < EMConstants.POPULATION_SIZE; p++) {
+    for (int p = 0; p < 1; p++) {
       TestCase testCase = new TestCase();
       StringBuilder solution = new StringBuilder();
       String className = cComponents.getClassName();
@@ -421,7 +418,7 @@ public class MyAlgorithm {
         }
       }
       testCase.setTestCase(solution.toString());
-      this.population.add(testCase);
+      this.testCase = testCase;
     }
   }
 
@@ -519,15 +516,27 @@ public class MyAlgorithm {
   public void evaluateTestCases(Target target) {
     for (TestCase testCase : this.population) {
       testCase.setWeight(0.0);
-    } //END for LOOP
+    }
 
     try {
       FOR:
       for (int t = 0; t < this.population.size(); t++) {
         TestCase testCase = this.population.get(t);
 
-        File fileI = new File(EMConstants.PROJECT_LOCATION + EMConstants.PROJECT_NAME + "/traces/" + this.threadNumber + "-" + (this.traceNumber + t + 1) + "Itrace.txt");
-        File fileO = new File(EMConstants.PROJECT_LOCATION + EMConstants.PROJECT_NAME + "/traces/" + this.threadNumber + "-" + (this.traceNumber + t + 1) + "Otrace.txt");
+        File fileI = new File(EMConstants.PROJECT_LOCATION
+                + EMConstants.PROJECT_NAME
+                + "/traces/"
+                + this.threadNumber +
+                "-"
+                + (this.traceNumber + t + 1)
+                + "Itrace.txt");
+        File fileO = new File(EMConstants.PROJECT_LOCATION
+                + EMConstants.PROJECT_NAME
+                + "/traces/"
+                + this.threadNumber
+                + "-"
+                + (this.traceNumber + t + 1)
+                + "Otrace.txt");
 
         if (fileI.exists() && fileO.exists()) {
           LineNumberReader lnrI = new LineNumberReader(new FileReader(fileI));
@@ -538,18 +547,12 @@ public class MyAlgorithm {
             do {
               if (lineI.startsWith("R: ")) {
                 break;
-              } //END if STATEMENT
+              }
               lineI = lnrI.readLine();
             } while (lineI != null && !lineI.startsWith("R:"));
             if (lineI == null) {
-//                            EMuJava.jTextArea2.append("Test Case# " + (t + 1) + "\n");
-//                            EMuJava.jTextArea2.append(((TestCase) this.population.get(t)).toString());
-//                            EMuJava.jTextArea2.append("\nFITNESS: Cannot be Calculated!");
               testCase.setWeight(-10.0);
-//                            EMuJava.jTextArea2.append("\nWEIGHT: -10.0\n\n");
             } else if (lineI.equals("R: 0.0 0 0.0")) {
-//                            EMuJava.jTextArea2.append("Test Case# " + (t + 1) + "\n");
-//                            EMuJava.jTextArea2.append(((TestCase) this.population.get(t)).toString());
               testCase.setStateFitness(0.0);
               testCase.setApproachLevel(0);
               testCase.setLocalFitness(0.0);
@@ -558,7 +561,7 @@ public class MyAlgorithm {
               do {
                 if (lineI != null && lineI.startsWith("N: ")) {
                   break;
-                } //END if STATEMENT
+                }
                 lineI = lnrI.readLine();
               } while (lineI != null && !lineI.startsWith("N: "));
               do {
@@ -581,14 +584,14 @@ public class MyAlgorithm {
                     testCase.setWeight(testCase.getWeight() + 1.0);
                     isSufficient = true;
                     break;
-                  } //END if STATEMENT
-                } //END while LOOP
+                  }
+                }
                 if (isSufficient) {
                   lineI = lnrI.readLine();
                   do {
                     if (lineI != null && lineI.startsWith("S: ")) {
                       break;
-                    } //END if STATEMENT
+                    }
                     lineI = lnrI.readLine();
                   } while (lineI != null && !lineI.startsWith("S: "));
                   ArrayList<String> listI = new ArrayList<String>();
@@ -599,20 +602,19 @@ public class MyAlgorithm {
                     lineI = lnrI.readLine();
                   } //END while LOOP
                   lineO = lnrO.readLine();
-                  DO1:
                   do {
                     if (lineO != null && lineO.startsWith("S: ")) {
-                      break DO1;
-                    } //END if STATEMENT
+                      break;
+                    }
                     lineO = lnrO.readLine();
                   } while (lineO != null && !lineO.startsWith("S: "));
-                  ArrayList listO = new ArrayList();
+                  ArrayList<String> listO = new ArrayList<>();
                   while (lineO != null) {
                     if (!lineO.equals("")) {
                       listO.add(lineO);
-                    } //END if STATEMENT
+                    }
                     lineO = lnrO.readLine();
-                  } //END while LOOP
+                  }
                   if (listI.size() > 0 && listO.size() > 0) {
                     testCase.setFitness(true);
                     String suffI = (String) listI.get(listI.size() - 1);
@@ -621,7 +623,7 @@ public class MyAlgorithm {
                       if (listI.size() == listO.size()) {
                         boolean isAlive = true;
                         int suff_cost = 0;
-                        FORA:
+
                         for (int x = 0; x < listI.size(); x++) {
                           String pathI = (String) listI.get(x);
                           String pathO = (String) listO.get(x);
@@ -629,8 +631,8 @@ public class MyAlgorithm {
                             suff_cost++;
                           } else {
                             isAlive = false;
-                          }//END if STATEMENT
-                        } //END for LOOP
+                          }
+                        }
                         testCase.setSufficiencyCost(suff_cost + "");
                         if (isAlive) {
                           testCase.setStatus("Normal");
@@ -651,20 +653,19 @@ public class MyAlgorithm {
                             } //END if STATEMENT
                           } //END for LOOP
                         } else {
-                          FORA:
                           for (int x = 0; x < listO.size(); x++) {
                             String pathI = (String) listI.get(x);
                             String pathO = (String) listO.get(x);
                             if (pathI.equals(pathO)) {
                               suff_cost++;
-                            } //END if STATEMENT
-                          } //END for LOOP
-                        } //END if-else STATEMENT
+                            }
+                          }
+                        }
                         testCase.setSufficiencyCost(suff_cost + "");
                         testCase.setStatus("Suspicious");
                         testCase.setWeight(testCase.getWeight() + 1.0);
                         target.setSuspicious(true);
-                      } //END if-else STATEMENT
+                      }
                       testCase.setWeight(testCase.getWeight()
                               - (testCase.getApproachLevel()
                               + testCase.getLocalFitness()
