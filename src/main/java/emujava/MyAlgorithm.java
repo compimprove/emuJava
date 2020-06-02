@@ -4,10 +4,7 @@
  */
 package emujava;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.LineNumberReader;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.StringTokenizer;
@@ -21,7 +18,7 @@ public class MyAlgorithm {
 
   public static int TS_K = 5;     //This 'K' is for Tournament Selection
 
-  private TestCase testCase;
+  private TestCase testCase = new TestCase();
 
   public Target target;
 
@@ -50,9 +47,9 @@ public class MyAlgorithm {
 //    System.out.println(this.population.get(0).toString());
 //    this.executeTestCases(target);
     for (int i = 1; i <= EMConstants.MAX_ITERATIONS; i++) {
-      this.generateTestCaseFor(target);
+      this.generateTestCaseFor(target); // Todo read this function
       System.out.println(testCase);
-      this.executeTestCases(this.target);
+      this.executeTestCases(this.target); // Todo read this function
       this.evaluateTestCases(target);
       if (target.getAchieved()) {
         EMConstants.ACHIEVED_TARGETS.add(target);
@@ -74,8 +71,8 @@ public class MyAlgorithm {
                     "/" +
                     target.getMutantNumber()
     );
-    ClassComponents cComponents = null;
-    ClassComponents c2Components = null;
+    ClassComponents classComponent1 = null;
+    ClassComponents classComponents2 = null;
     try {
       String targetPath = EMConstants.PROJECT_LOCATION
               + EMConstants.PROJECT_NAME
@@ -93,10 +90,10 @@ public class MyAlgorithm {
               || operator.equals("JID")
               || operator.equals("ECC")) {
 
-        cComponents = EMController.create().getC1Components();
+        classComponent1 = EMController.create().getC1Components();
       } else {
-        cComponents = EMController.create().getC1Components();
-        c2Components = EMController.create().getC2Components();
+        classComponent1 = EMController.create().getC1Components();
+        classComponents2 = EMController.create().getC2Components();
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -104,15 +101,16 @@ public class MyAlgorithm {
 
 
     for (int p = 0; p < 1; p++) {
-      TestCase testCase = new TestCase();
       StringBuilder solution = new StringBuilder();
-      String className = cComponents.getClassName();
+      String className = classComponent1.getClassName();
       String objectName = className + "1";
       testCase.setClassName(className);
       testCase.setObjectName(objectName);
       testCase.setMethod(methodUnderTest);
-      if (c2Components != null) {
-        String class2Name = c2Components.getClassName();
+
+      // initialized object
+      if (classComponents2 != null) {
+        String class2Name = classComponents2.getClassName();
         objectName = class2Name + "1";
         testCase.setClassName2(class2Name);
         testCase.setObjectName(objectName);
@@ -131,27 +129,28 @@ public class MyAlgorithm {
                 .append("(); ");
       }
 
-      int methodCallSeqCount =
+      int methodCallSequenceCount =
               (int) (Math.random() * EMConstants.METHOD_CLASS_SEQUENCE_COUNT);
-      if (methodCallSeqCount <= 1) {
-        methodCallSeqCount += 2;
+      if (methodCallSequenceCount <= 1) {
+        methodCallSequenceCount += 4;
       }
-      for (int m = 1; m <= methodCallSeqCount; m++) {
-        int methodNumber = (int) (Math.random() * cComponents.getMMList().size());
-        MemberMethod mMethod =
-                (MemberMethod) cComponents.getMMList().get(methodNumber);
-        if (!mMethod.getMethodName().equals(methodUnderTest)) {
+      for (int m = 1; m <= methodCallSequenceCount; m++) {
+        int methodNumber =
+                (int) (Math.random() * classComponent1.getMMList().size());
+        MemberMethod memberMethod =
+                (MemberMethod) classComponent1.getMMList().get(methodNumber);
+        if (!memberMethod.getMethodName().equals(methodUnderTest)) {
           solution.append(objectName)
                   .append(".")
-                  .append(mMethod.getMethodName())
+                  .append(memberMethod.getMethodName())
                   .append("(");
-          ArrayList<Token> mTokens = mMethod.getMethodTokens();
+          ArrayList<Token> methodTokens = memberMethod.getMethodTokens();
           int mt = 0;
           Token token = null;
           do {
-            token = (Token) mTokens.get(mt++);
+            token = (Token) methodTokens.get(mt++);
           } while (!token.getToken().equals("("));
-          token = (Token) mTokens.get(mt++);
+          token = (Token) methodTokens.get(mt++);
           while (!token.getToken().equals(")")) {
             switch (token.getToken()) {
               case "byte":
@@ -220,24 +219,24 @@ public class MyAlgorithm {
               }
             }
             mt++;
-            token = (Token) mTokens.get(mt++);
+            token = (Token) methodTokens.get(mt++);
             if (token.getToken().equals(",")) {
               solution.append(",");
-              token = (Token) mTokens.get(mt++);
+              token = (Token) methodTokens.get(mt++);
             }
           }
           solution.append("); ");
         }
       }
 
-      if (c2Components != null) {
-        methodCallSeqCount = (int) (Math.random() * (EMConstants.METHOD_CLASS_SEQUENCE_COUNT / 2));
-        if (methodCallSeqCount <= 1) {
-          methodCallSeqCount += 2;
+      if (classComponents2 != null) {
+        methodCallSequenceCount = (int) (Math.random() * (EMConstants.METHOD_CLASS_SEQUENCE_COUNT / 2));
+        if (methodCallSequenceCount <= 1) {
+          methodCallSequenceCount += 2;
         }
-        for (int m = 1; m <= methodCallSeqCount; m++) {
-          int methodNumber = (int) (Math.random() * c2Components.getMMList().size());
-          MemberMethod mMethod = (MemberMethod) c2Components.getMMList().get(methodNumber);
+        for (int m = 1; m <= methodCallSequenceCount; m++) {
+          int methodNumber = (int) (Math.random() * classComponents2.getMMList().size());
+          MemberMethod mMethod = (MemberMethod) classComponents2.getMMList().get(methodNumber);
           solution.append(objectName)
                   .append(".")
                   .append(mMethod.getMethodName()).append("(");
@@ -326,7 +325,7 @@ public class MyAlgorithm {
         }
       }
 
-      ArrayList<MemberMethod> mmList = cComponents.getMMList();
+      ArrayList<MemberMethod> mmList = classComponent1.getMMList();
       for (MemberMethod mMethod : mmList) {
         if (mMethod.getMethodName().equals(methodUnderTest)) {
           solution.append(objectName)
@@ -417,17 +416,24 @@ public class MyAlgorithm {
           break;
         }
       }
-      testCase.setTestCase(solution.toString());
-      this.testCase = testCase;
+      this.testCase.setTestCase(solution.toString());
     }
   }
 
   public void executeTestCases(Target target) {
     try {
-      String targetPath1 = EMConstants.PROJECT_LOCATION + EMConstants.PROJECT_NAME + "/instrument/" + target.getMutationOperator() + "/" + target.getMutantNumber();
-      String targetPath2 = EMConstants.PROJECT_LOCATION + EMConstants.PROJECT_NAME + "/oinstrument/" + target.getMutationOperator() + "/" + target.getMutantNumber();
-      for (int t = 0; t < this.population.size(); t++) {
-        TestCase testCase = (TestCase) this.population.get(t);
+      String targetPath1 = EMConstants.PROJECT_LOCATION
+              + EMConstants.PROJECT_NAME
+              + "/instrument/"
+              + target.getMutationOperator()
+              + "/" + target.getMutantNumber();
+      String targetPath2 = EMConstants.PROJECT_LOCATION
+              + EMConstants.PROJECT_NAME
+              + "/oinstrument/"
+              + target.getMutationOperator()
+              + "/" + target.getMutantNumber();
+
+      for (int t = 0; t < 1; t++) {
         String driverString = "import java.io.*;\n";
         driverString += "public class Driver" + t + " {\n";
         driverString += "public static void main( String[] args )throws Exception {\n";
@@ -443,42 +449,63 @@ public class MyAlgorithm {
         RandomAccessFile rafo = new RandomAccessFile(driverO, "rw");
         rafo.writeBytes(driverString);
         rafo.close();
-      } //END for LOOP
+      }
 
-      Runtime.getRuntime().exec("javac -cp " + targetPath1 + " " + targetPath1 + "/*.java");
+      Runtime.getRuntime().exec("javac -cp "
+              + targetPath1 + " "
+              + targetPath1 +
+              "/*.java"
+      );
       File d1Check = new File(targetPath1 + "/Driver0.class");
       int timeout = 1;
       while (!d1Check.exists() && timeout <= EMConstants.GA_TIMEOUT) {
         timeout++;
-      } //END of while LOOP
+      }
 
-      Runtime.getRuntime().exec("javac -cp " + targetPath2 + " " + targetPath2 + "/*.java");
+      Runtime.getRuntime().exec("javac -cp "
+              + targetPath2 + " "
+              + targetPath2
+              + "/*.java"
+      );
       File d2Check = new File(targetPath2 + "/Driver0.class");
-      timeout = 1;
-      while (!d2Check.exists() && timeout <= EMConstants.GA_TIMEOUT) {
-        timeout++;
-      } //END of while LOOP
 
-      for (int t = 0; t < this.population.size(); ) {
-        for (int a = 1; a <= 4 && t < this.population.size(); a++, t++) {
-          String ITraceFile = EMConstants.PROJECT_LOCATION + EMConstants.PROJECT_NAME + "/traces/" + this.threadNumber + "-" + this.traceCount + "Itrace.txt";
-          Runtime.getRuntime().exec("java -cp " + targetPath1 + " Driver" + t + " " + ITraceFile);
+      for (int t = 0; t < 1; t++) {
+        String ITraceFile = EMConstants.PROJECT_LOCATION
+                + EMConstants.PROJECT_NAME
+                + "/traces/"
+                + this.threadNumber
+                + "-"
+                + this.traceCount
+                + "Itrace.txt";
+        Runtime.getRuntime().exec("java -cp "
+                + targetPath1
+                + " Driver"
+                + t + " "
+                + ITraceFile);
+        String OTraceFile = EMConstants.PROJECT_LOCATION
+                + EMConstants.PROJECT_NAME
+                + "/traces/"
+                + this.threadNumber
+                + "-"
+                + this.traceCount
+                + "Otrace.txt";
+        Runtime.getRuntime().exec("java -cp "
+                + targetPath2
+                + " Driver"
+                + t + " "
+                + OTraceFile);
+        this.traceCount++;
+      }
 
-          String OTraceFile = EMConstants.PROJECT_LOCATION + EMConstants.PROJECT_NAME + "/traces/" + this.threadNumber + "-" + this.traceCount + "Otrace.txt";
-          Runtime.getRuntime().exec("java -cp " + targetPath2 + " Driver" + t + " " + OTraceFile);
-
-          this.traceCount++;
-        } //END for LOOP
-      } //END for LOOP
-
-      String TempITraceFile = EMConstants.PROJECT_LOCATION + EMConstants.PROJECT_NAME + "/traces/" + this.threadNumber + "-" + this.traceCount + "Itrace.txt";
+      String TempITraceFile = EMConstants.PROJECT_LOCATION
+              + EMConstants.PROJECT_NAME
+              + "/traces/"
+              + this.threadNumber
+              + "-" + this.traceCount
+              + "Itrace.txt";
       File filei = new File(TempITraceFile);
-      timeout = 1;
-      while (!filei.exists() && timeout <= EMConstants.GA_TIMEOUT) {
-        timeout++;
-      } //END while LOOP
 
-      for (int t = 0; t < this.population.size(); t++) {
+      for (int t = 0; t < 1; t++) {
         File driverI = new File(targetPath1 + "/Driver" + t + ".java");
         File driverIC = new File(targetPath1 + "/Driver" + t + ".class");
         driverI.delete();
@@ -487,13 +514,20 @@ public class MyAlgorithm {
         File driverOC = new File(targetPath2 + "/Driver" + t + ".class");
         driverO.delete();
         driverOC.delete();
-      } //END for LOOP
+      }
     } catch (Exception e) {
       e.printStackTrace();
-    } //END try-catch BLOCK
+    }
+  }
 
-//    int testCasesGen = Integer.parseInt(TestCaseAnalysis.jLabel11.getText().trim()) + this.population.size();
-//    TestCaseAnalysis.jLabel11.setText("" + testCasesGen);
+  private int waitForExitValue(Process executeProcess)
+          throws IOException, InterruptedException {
+    InputStream stderr = executeProcess.getErrorStream();
+    InputStreamReader isr = new InputStreamReader(stderr);
+    BufferedReader br = new BufferedReader(isr);
+    String line = null;
+    while ((line = br.readLine()) != null) ;
+    return executeProcess.waitFor();
   }
 
   public String[] breakTestCase(String tc) {
@@ -514,274 +548,272 @@ public class MyAlgorithm {
   }
 
   public void evaluateTestCases(Target target) {
-    for (TestCase testCase : this.population) {
-      testCase.setWeight(0.0);
-    }
+    testCase.setWeight(0.0);
 
     try {
-      FOR:
-      for (int t = 0; t < this.population.size(); t++) {
-        TestCase testCase = this.population.get(t);
+//      FOR:
+//      for (int t = 0; t < this.population.size(); t++) {
+//        TestCase testCase = this.population.get(t);
+      int t = 0;
+      File fileI = new File(EMConstants.PROJECT_LOCATION
+              + EMConstants.PROJECT_NAME
+              + "/traces/"
+              + this.threadNumber +
+              "-"
+              + (this.traceNumber + t + 1)
+              + "Itrace.txt");
+      File fileO = new File(EMConstants.PROJECT_LOCATION
+              + EMConstants.PROJECT_NAME
+              + "/traces/"
+              + this.threadNumber
+              + "-"
+              + (this.traceNumber + t + 1)
+              + "Otrace.txt");
 
-        File fileI = new File(EMConstants.PROJECT_LOCATION
-                + EMConstants.PROJECT_NAME
-                + "/traces/"
-                + this.threadNumber +
-                "-"
-                + (this.traceNumber + t + 1)
-                + "Itrace.txt");
-        File fileO = new File(EMConstants.PROJECT_LOCATION
-                + EMConstants.PROJECT_NAME
-                + "/traces/"
-                + this.threadNumber
-                + "-"
-                + (this.traceNumber + t + 1)
-                + "Otrace.txt");
-
-        if (fileI.exists() && fileO.exists()) {
-          LineNumberReader lnrI = new LineNumberReader(new FileReader(fileI));
-          LineNumberReader lnrO = new LineNumberReader(new FileReader(fileO));
-          String lineI = lnrI.readLine();
-          String lineO = lnrO.readLine();
-          if (lineI != null) {
+      if (fileI.exists() && fileO.exists()) {
+        LineNumberReader lnrI = new LineNumberReader(new FileReader(fileI));
+        LineNumberReader lnrO = new LineNumberReader(new FileReader(fileO));
+        String lineI = lnrI.readLine();
+        String lineO = lnrO.readLine();
+        if (lineI != null) {
+          do {
+            if (lineI.startsWith("R: ")) {
+              break;
+            }
+            lineI = lnrI.readLine();
+          } while (lineI != null && !lineI.startsWith("R:"));
+          if (lineI == null) {
+            testCase.setWeight(-10.0);
+          } else if (lineI.equals("R: 0.0 0 0.0")) {
+            testCase.setStateFitness(0.0);
+            testCase.setApproachLevel(0);
+            testCase.setLocalFitness(0.0);
+            testCase.setWeight(4.0);
+            lineI = lnrI.readLine();
             do {
-              if (lineI.startsWith("R: ")) {
+              if (lineI != null && lineI.startsWith("N: ")) {
                 break;
               }
               lineI = lnrI.readLine();
-            } while (lineI != null && !lineI.startsWith("R:"));
-            if (lineI == null) {
-              testCase.setWeight(-10.0);
-            } else if (lineI.equals("R: 0.0 0 0.0")) {
-              testCase.setStateFitness(0.0);
-              testCase.setApproachLevel(0);
-              testCase.setLocalFitness(0.0);
-              testCase.setWeight(4.0);
-              lineI = lnrI.readLine();
-              do {
-                if (lineI != null && lineI.startsWith("N: ")) {
+            } while (lineI != null && !lineI.startsWith("N: "));
+            do {
+              if (lineO != null && lineO.startsWith("N: ")) {
+                break;
+              } //END if STATEMENT
+              lineO = lnrO.readLine();
+            } while (lineO != null && !lineO.startsWith("N: "));
+            if (lineI != null && lineO != null) {
+              boolean isSufficient = false;
+              StringTokenizer tokenI = new StringTokenizer(lineI, " ");
+              StringTokenizer tokenO = new StringTokenizer(lineO, " ");
+              tokenI.nextToken();
+              tokenO.nextToken();
+              while (tokenI.hasMoreTokens()) {
+                String token1 = tokenI.nextToken();
+                String token2 = tokenO.nextToken();
+                if (!token1.equals(token2)) {
+                  testCase.setNecessityCost("0.0");
+                  testCase.setWeight(testCase.getWeight() + 1.0);
+                  isSufficient = true;
                   break;
                 }
+              }
+              if (isSufficient) {
                 lineI = lnrI.readLine();
-              } while (lineI != null && !lineI.startsWith("N: "));
-              do {
-                if (lineO != null && lineO.startsWith("N: ")) {
-                  break;
-                } //END if STATEMENT
-                lineO = lnrO.readLine();
-              } while (lineO != null && !lineO.startsWith("N: "));
-              if (lineI != null && lineO != null) {
-                boolean isSufficient = false;
-                StringTokenizer tokenI = new StringTokenizer(lineI, " ");
-                StringTokenizer tokenO = new StringTokenizer(lineO, " ");
-                tokenI.nextToken();
-                tokenO.nextToken();
-                while (tokenI.hasMoreTokens()) {
-                  String token1 = tokenI.nextToken();
-                  String token2 = tokenO.nextToken();
-                  if (!token1.equals(token2)) {
-                    testCase.setNecessityCost("0.0");
-                    testCase.setWeight(testCase.getWeight() + 1.0);
-                    isSufficient = true;
+                do {
+                  if (lineI != null && lineI.startsWith("S: ")) {
                     break;
                   }
-                }
-                if (isSufficient) {
                   lineI = lnrI.readLine();
-                  do {
-                    if (lineI != null && lineI.startsWith("S: ")) {
-                      break;
-                    }
-                    lineI = lnrI.readLine();
-                  } while (lineI != null && !lineI.startsWith("S: "));
-                  ArrayList<String> listI = new ArrayList<String>();
-                  while (lineI != null) {
-                    if (!lineI.equals("")) {
-                      listI.add(lineI);
-                    } //END if STATEMENT
-                    lineI = lnrI.readLine();
-                  } //END while LOOP
-                  lineO = lnrO.readLine();
-                  do {
-                    if (lineO != null && lineO.startsWith("S: ")) {
-                      break;
-                    }
-                    lineO = lnrO.readLine();
-                  } while (lineO != null && !lineO.startsWith("S: "));
-                  ArrayList<String> listO = new ArrayList<>();
-                  while (lineO != null) {
-                    if (!lineO.equals("")) {
-                      listO.add(lineO);
-                    }
-                    lineO = lnrO.readLine();
+                } while (lineI != null && !lineI.startsWith("S: "));
+                ArrayList<String> listI = new ArrayList<String>();
+                while (lineI != null) {
+                  if (!lineI.equals("")) {
+                    listI.add(lineI);
+                  } //END if STATEMENT
+                  lineI = lnrI.readLine();
+                } //END while LOOP
+                lineO = lnrO.readLine();
+                do {
+                  if (lineO != null && lineO.startsWith("S: ")) {
+                    break;
                   }
-                  if (listI.size() > 0 && listO.size() > 0) {
-                    testCase.setFitness(true);
-                    String suffI = (String) listI.get(listI.size() - 1);
-                    String suffO = (String) listO.get(listO.size() - 1);
-                    if (suffI.equals(suffO)) {
-                      if (listI.size() == listO.size()) {
-                        boolean isAlive = true;
-                        int suff_cost = 0;
+                  lineO = lnrO.readLine();
+                } while (lineO != null && !lineO.startsWith("S: "));
+                ArrayList<String> listO = new ArrayList<>();
+                while (lineO != null) {
+                  if (!lineO.equals("")) {
+                    listO.add(lineO);
+                  }
+                  lineO = lnrO.readLine();
+                }
+                if (listI.size() > 0 && listO.size() > 0) {
+                  testCase.setFitness(true);
+                  String suffI = (String) listI.get(listI.size() - 1);
+                  String suffO = (String) listO.get(listO.size() - 1);
+                  if (suffI.equals(suffO)) {
+                    if (listI.size() == listO.size()) {
+                      boolean isAlive = true;
+                      int suff_cost = 0;
 
+                      for (int x = 0; x < listI.size(); x++) {
+                        String pathI = (String) listI.get(x);
+                        String pathO = (String) listO.get(x);
+                        if (pathI.equals(pathO)) {
+                          suff_cost++;
+                        } else {
+                          isAlive = false;
+                        }
+                      }
+                      testCase.setSufficiencyCost(suff_cost + "");
+                      if (isAlive) {
+                        testCase.setStatus("Normal");
+                      } else {
+                        testCase.setStatus("Suspicious");
+                        testCase.setWeight(testCase.getWeight() + 1.0);
+                        target.setSuspicious(true);
+                      } //END if-else STATEMENT
+                    } else {
+                      int suff_cost = 0;
+                      if (listI.size() < listO.size()) {
+                        FORA:
                         for (int x = 0; x < listI.size(); x++) {
                           String pathI = (String) listI.get(x);
                           String pathO = (String) listO.get(x);
                           if (pathI.equals(pathO)) {
                             suff_cost++;
-                          } else {
-                            isAlive = false;
-                          }
-                        }
-                        testCase.setSufficiencyCost(suff_cost + "");
-                        if (isAlive) {
-                          testCase.setStatus("Normal");
-                        } else {
-                          testCase.setStatus("Suspicious");
-                          testCase.setWeight(testCase.getWeight() + 1.0);
-                          target.setSuspicious(true);
-                        } //END if-else STATEMENT
+                          } //END if STATEMENT
+                        } //END for LOOP
                       } else {
-                        int suff_cost = 0;
-                        if (listI.size() < listO.size()) {
-                          FORA:
-                          for (int x = 0; x < listI.size(); x++) {
-                            String pathI = (String) listI.get(x);
-                            String pathO = (String) listO.get(x);
-                            if (pathI.equals(pathO)) {
-                              suff_cost++;
-                            } //END if STATEMENT
-                          } //END for LOOP
-                        } else {
-                          for (int x = 0; x < listO.size(); x++) {
-                            String pathI = (String) listI.get(x);
-                            String pathO = (String) listO.get(x);
-                            if (pathI.equals(pathO)) {
-                              suff_cost++;
-                            }
+                        for (int x = 0; x < listO.size(); x++) {
+                          String pathI = (String) listI.get(x);
+                          String pathO = (String) listO.get(x);
+                          if (pathI.equals(pathO)) {
+                            suff_cost++;
                           }
                         }
-                        testCase.setSufficiencyCost(suff_cost + "");
-                        testCase.setStatus("Suspicious");
-                        testCase.setWeight(testCase.getWeight() + 1.0);
-                        target.setSuspicious(true);
                       }
-                      testCase.setWeight(testCase.getWeight()
-                              - (testCase.getApproachLevel()
-                              + testCase.getLocalFitness()
-                              + testCase.getStateFitness())
-                      );
+                      testCase.setSufficiencyCost(suff_cost + "");
+                      testCase.setStatus("Suspicious");
+                      testCase.setWeight(testCase.getWeight() + 1.0);
+                      target.setSuspicious(true);
+                    }
+                    testCase.setWeight(testCase.getWeight()
+                            - (testCase.getApproachLevel()
+                            + testCase.getLocalFitness()
+                            + testCase.getStateFitness())
+                    );
 //                      EMuJava.jTextArea2.append("\nFITNESS: [(" + testCase.getStateFitness() + ", [" + testCase.getApproachLevel() + ", " + testCase.getLocalFitness() + "]) ; " + testCase.getNecessityCost() + "; (" + testCase.getSufficiencyCost() + ", " + testCase.getStatus() + ")]");
 //                      EMuJava.jTextArea2.append("\nWEIGHT: " + testCase.getWeight() + "\n\n");
-                    } else {
-                      testCase.setSufficiencyCost("0");
-                      testCase.setWeight(testCase.getWeight() + 1.0);
-                      testCase.setStatus("Normal");
-                      target.setTestCase(testCase);
-                      target.setAchieved(true);
-                      target.setStatus("Killed");
-                      EMConstants.ACHIEVED_TARGETS.add(target);
-                      EMConstants.ALL_TARGETS.remove(target);
-                      EMConstants.EFFECTIVE_TESTCASES.add(testCase);
-                      testCase.setWeight(testCase.getWeight()
-                              - (testCase.getApproachLevel()
-                              + testCase.getLocalFitness()
-                              + testCase.getStateFitness())
-                      );
+                  } else {
+                    testCase.setSufficiencyCost("0");
+                    testCase.setWeight(testCase.getWeight() + 1.0);
+                    testCase.setStatus("Normal");
+                    target.setTestCase(testCase);
+                    target.setAchieved(true);
+                    target.setStatus("Killed");
+                    EMConstants.ACHIEVED_TARGETS.add(target);
+                    EMConstants.ALL_TARGETS.remove(target);
+                    EMConstants.EFFECTIVE_TESTCASES.add(testCase);
+                    testCase.setWeight(testCase.getWeight()
+                            - (testCase.getApproachLevel()
+                            + testCase.getLocalFitness()
+                            + testCase.getStateFitness())
+                    );
 //                      EMuJava.jTextArea3.append("TARGET: " + target.getMutationOperator() + "-" + target.getMutantNumber() + ",\tITERATION: " + (EMConstants.ITERATIONS_PERFORMED + 1) + "\n");
 //                      EMuJava.jTextArea3.append(((TestCase) this.population.get(t)).toString() + "\n\n");
 //                      EMuJava.jTextArea2.append("\nFITNESS: [(" + testCase.getStateFitness() + ", [" + testCase.getApproachLevel() + ", " + testCase.getLocalFitness() + "]) ; " + testCase.getNecessityCost() + "; (" + testCase.getSufficiencyCost() + ", " + testCase.getStatus() + ")]");
 //                      EMuJava.jTextArea2.append("\nWEIGHT: " + testCase.getWeight() + "\n\n");
 //                      ProcessProgress.getProcessProgress().statusLabel.setText("Target has achieved!!!");
-                      break FOR;
-                    } //END if-else STATEMENT
-                  } else {
-//                    EMuJava.jTextArea2.append("\nFITNESS: Cannot be Calculated!");
-                    testCase.setWeight(-10.0);
-//                    EMuJava.jTextArea2.append("\nWEIGHT: -10.0\n\n");
+//                      break FOR;
                   } //END if-else STATEMENT
                 } else {
-                  testCase.setFitness(true);
-                  lineI = lineI.substring(3);
-                  lineO = lineO.substring(3);
-                  if (lineI.equals("true") || lineI.equals("false")) {
-                    testCase.setNecessityCost("0.5");
-                  } else {
-                    double weightI = 0.0;
-                    double weightO = 0.0;
-                    for (int i = 0; i < lineI.length(); i++) {
-                      weightI += lineI.charAt(i);
-                    } //END for LOOP
-                    for (int o = 0; o < lineO.length(); o++) {
-                      weightO += lineO.charAt(o);
-                    } //END for LOOP
-                    double necessity_cost = (weightI - weightO) / (weightI + weightO);
-                    necessity_cost = Math.abs(necessity_cost);
-                    String nc = necessity_cost + "";
-                    if (nc.length() > 4) {
-                      testCase.setNecessityCost(nc.substring(0, 4));
-                    } else {
-                      testCase.setNecessityCost(nc);
-                    } //END if-else STATEMENT
-                  } //END if-else STATEMENT
-                  testCase.setSufficiencyCost("c");
-                  testCase.setStatus("Normal");
-                  testCase.setWeight(testCase.getWeight() - (testCase.getApproachLevel() + testCase.getLocalFitness() + testCase.getStateFitness()));
-//                  EMuJava.jTextArea2.append("\nFITNESS: [(" + testCase.getStateFitness() + ", [" + testCase.getApproachLevel() + ", " + testCase.getLocalFitness() + "]) ; " + testCase.getNecessityCost() + "; (c, Normal)]");
-//                  EMuJava.jTextArea2.append("\nWEIGHT: " + testCase.getWeight() + "\n\n");
+//                    EMuJava.jTextArea2.append("\nFITNESS: Cannot be Calculated!");
+                  testCase.setWeight(-10.0);
+//                    EMuJava.jTextArea2.append("\nWEIGHT: -10.0\n\n");
                 } //END if-else STATEMENT
               } else {
-                testCase.setWeight(-10.0);
-//                EMuJava.jTextArea2.append("\nFITNESS: Cannot be Calculated!");
-//                EMuJava.jTextArea2.append("\nWEIGHT: -10.0\n\n");
+                testCase.setFitness(true);
+                lineI = lineI.substring(3);
+                lineO = lineO.substring(3);
+                if (lineI.equals("true") || lineI.equals("false")) {
+                  testCase.setNecessityCost("0.5");
+                } else {
+                  double weightI = 0.0;
+                  double weightO = 0.0;
+                  for (int i = 0; i < lineI.length(); i++) {
+                    weightI += lineI.charAt(i);
+                  } //END for LOOP
+                  for (int o = 0; o < lineO.length(); o++) {
+                    weightO += lineO.charAt(o);
+                  } //END for LOOP
+                  double necessity_cost = (weightI - weightO) / (weightI + weightO);
+                  necessity_cost = Math.abs(necessity_cost);
+                  String nc = necessity_cost + "";
+                  if (nc.length() > 4) {
+                    testCase.setNecessityCost(nc.substring(0, 4));
+                  } else {
+                    testCase.setNecessityCost(nc);
+                  } //END if-else STATEMENT
+                } //END if-else STATEMENT
+                testCase.setSufficiencyCost("c");
+                testCase.setStatus("Normal");
+                testCase.setWeight(testCase.getWeight() - (testCase.getApproachLevel() + testCase.getLocalFitness() + testCase.getStateFitness()));
+//                  EMuJava.jTextArea2.append("\nFITNESS: [(" + testCase.getStateFitness() + ", [" + testCase.getApproachLevel() + ", " + testCase.getLocalFitness() + "]) ; " + testCase.getNecessityCost() + "; (c, Normal)]");
+//                  EMuJava.jTextArea2.append("\nWEIGHT: " + testCase.getWeight() + "\n\n");
               } //END if-else STATEMENT
             } else {
-              testCase.setFitness(true);
-//              EMuJava.jTextArea2.append("Test Case# " + (t + 1) + "\n");
-//              EMuJava.jTextArea2.append(((TestCase) this.population.get(t)).toString());
-              StringTokenizer tokenizer = new StringTokenizer(lineI, " ");
-              tokenizer.nextToken();
-              String token = tokenizer.nextToken();
-              testCase.setStateFitness(Double.parseDouble(token));
-              if (token.equals("0.0")) {
-                testCase.setWeight(testCase.getWeight() + 2.0);
-              } //END if STATEMENT
-              token = tokenizer.nextToken();
-              testCase.setApproachLevel(Integer.parseInt(token));
-              if (token.equals("0")) {
-                testCase.setWeight(testCase.getWeight() + 1.0);
-              } //END if STATEMENT
-              token = tokenizer.nextToken();
-              testCase.setLocalFitness(Double.parseDouble(token));
-              if (token.equals("0.0")) {
-                testCase.setWeight(testCase.getWeight() + 1.0);
-              } //END if STATEMENT
-              testCase.setNecessityCost("c");
-              testCase.setSufficiencyCost("c");
-              testCase.setStatus("Normal");
-              testCase.setWeight(testCase.getWeight()
-                      - (testCase.getApproachLevel()
-                      + testCase.getLocalFitness()
-                      + testCase.getStateFitness())
-              );
-//              EMuJava.jTextArea2.append("\nFITNESS: [(" + testCase.getStateFitness() + ", [" + testCase.getApproachLevel() + ", " + testCase.getLocalFitness() + "]) ; c ; (c, Normal)]");
-//              EMuJava.jTextArea2.append("\nWEIGHT: " + testCase.getWeight() + "\n\n");
+              testCase.setWeight(-10.0);
+//                EMuJava.jTextArea2.append("\nFITNESS: Cannot be Calculated!");
+//                EMuJava.jTextArea2.append("\nWEIGHT: -10.0\n\n");
             } //END if-else STATEMENT
           } else {
+            testCase.setFitness(true);
+//              EMuJava.jTextArea2.append("Test Case# " + (t + 1) + "\n");
+//              EMuJava.jTextArea2.append(((TestCase) this.population.get(t)).toString());
+            StringTokenizer tokenizer = new StringTokenizer(lineI, " ");
+            tokenizer.nextToken();
+            String token = tokenizer.nextToken();
+            testCase.setStateFitness(Double.parseDouble(token));
+            if (token.equals("0.0")) {
+              testCase.setWeight(testCase.getWeight() + 2.0);
+            } //END if STATEMENT
+            token = tokenizer.nextToken();
+            testCase.setApproachLevel(Integer.parseInt(token));
+            if (token.equals("0")) {
+              testCase.setWeight(testCase.getWeight() + 1.0);
+            } //END if STATEMENT
+            token = tokenizer.nextToken();
+            testCase.setLocalFitness(Double.parseDouble(token));
+            if (token.equals("0.0")) {
+              testCase.setWeight(testCase.getWeight() + 1.0);
+            } //END if STATEMENT
+            testCase.setNecessityCost("c");
+            testCase.setSufficiencyCost("c");
+            testCase.setStatus("Normal");
+            testCase.setWeight(testCase.getWeight()
+                    - (testCase.getApproachLevel()
+                    + testCase.getLocalFitness()
+                    + testCase.getStateFitness())
+            );
+//              EMuJava.jTextArea2.append("\nFITNESS: [(" + testCase.getStateFitness() + ", [" + testCase.getApproachLevel() + ", " + testCase.getLocalFitness() + "]) ; c ; (c, Normal)]");
+//              EMuJava.jTextArea2.append("\nWEIGHT: " + testCase.getWeight() + "\n\n");
+          } //END if-else STATEMENT
+        } else {
 //            EMuJava.jTextArea2.append("Test Case# " + (t + 1) + "\n");
 //            EMuJava.jTextArea2.append(((TestCase) this.population.get(t)).toString());
 //            EMuJava.jTextArea2.append("\nFITNESS: Cannot be Calculated!");
-            testCase.setWeight(-10.0);
+          testCase.setWeight(-10.0);
 //            EMuJava.jTextArea2.append("\nWEIGHT: -10.0\n\n");
-          } //END if-else LOOP
-        } else {
+        } //END if-else LOOP
+      } else {
 //          EMuJava.jTextArea2.append("Test Case# " + (t + 1) + "\n");
 //          EMuJava.jTextArea2.append(((TestCase) this.population.get(t)).toString());
 //          EMuJava.jTextArea2.append("\nFITNESS: Cannot be Calculated!");
-          testCase.setWeight(-10.0);
+        testCase.setWeight(-10.0);
 //          EMuJava.jTextArea2.append("\nWEIGHT: -10.0\n\n");
-        }
       }
+
     } catch (Exception e) {
       e.printStackTrace();
     } //END try-catch BLOCK
