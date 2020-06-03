@@ -46,10 +46,12 @@ public class MyAlgorithm {
 //    this.generateTestCaseFor(target);
 //    System.out.println(this.population.get(0).toString());
 //    this.executeTestCases(target);
+    EMConstants.MAX_ITERATIONS = 5;
     for (int i = 1; i <= EMConstants.MAX_ITERATIONS; i++) {
       this.generateTestCaseFor(target); // Todo read this function
       System.out.println(testCase);
       this.executeTestCases(this.target); // Todo read this function
+
       this.evaluateTestCases(target);
       if (target.getAchieved()) {
         EMConstants.ACHIEVED_TARGETS.add(target);
@@ -451,23 +453,21 @@ public class MyAlgorithm {
         rafo.close();
       }
 
-      Runtime.getRuntime().exec("javac -cp "
+      Process compileInstrumentProcess = Runtime.getRuntime().exec("javac -cp "
               + targetPath1 + " "
               + targetPath1 +
               "/*.java"
       );
-      File d1Check = new File(targetPath1 + "/Driver0.class");
-      int timeout = 1;
-      while (!d1Check.exists() && timeout <= EMConstants.GA_TIMEOUT) {
-        timeout++;
-      }
+//      File d1Check = new File(targetPath1 + "/Driver0.class");
 
-      Runtime.getRuntime().exec("javac -cp "
+      Process compileOInstrumentProcess = Runtime.getRuntime().exec("javac -cp "
               + targetPath2 + " "
               + targetPath2
               + "/*.java"
       );
-      File d2Check = new File(targetPath2 + "/Driver0.class");
+//      File d2Check = new File(targetPath2 + "/Driver0.class");
+      waitForExitValue(compileInstrumentProcess);
+      waitForExitValue(compileOInstrumentProcess);
 
       for (int t = 0; t < 1; t++) {
         String ITraceFile = EMConstants.PROJECT_LOCATION
@@ -477,7 +477,7 @@ public class MyAlgorithm {
                 + "-"
                 + this.traceCount
                 + "Itrace.txt";
-        Runtime.getRuntime().exec("java -cp "
+        Process ItraceProcess = Runtime.getRuntime().exec("java -cp "
                 + targetPath1
                 + " Driver"
                 + t + " "
@@ -489,11 +489,13 @@ public class MyAlgorithm {
                 + "-"
                 + this.traceCount
                 + "Otrace.txt";
-        Runtime.getRuntime().exec("java -cp "
+        Process OItraceProcess = Runtime.getRuntime().exec("java -cp "
                 + targetPath2
                 + " Driver"
                 + t + " "
                 + OTraceFile);
+        waitForExitValue(ItraceProcess);
+        waitForExitValue(OItraceProcess);
         this.traceCount++;
       }
 
@@ -505,6 +507,7 @@ public class MyAlgorithm {
               + "Itrace.txt";
       File filei = new File(TempITraceFile);
 
+      // Delete temp file
       for (int t = 0; t < 1; t++) {
         File driverI = new File(targetPath1 + "/Driver" + t + ".java");
         File driverIC = new File(targetPath1 + "/Driver" + t + ".class");
