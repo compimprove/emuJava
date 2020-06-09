@@ -18,18 +18,15 @@ public class MyAlgorithm {
 
   public static int TS_K = 5;     //This 'K' is for Tournament Selection
 
-  private TestCase testCase = new TestCase();
+  private final TestCase testCase = new TestCase();
 
   public Target target;
 
   public int threadNumber;
 
-  private final ArrayList<TestCase> population;
-
   private int traceCount, iterationNumber, traceNumber;
 
   public MyAlgorithm() {
-    population = new ArrayList<>();
     traceCount = 1;
     iterationNumber = 0;
   }
@@ -43,25 +40,23 @@ public class MyAlgorithm {
   }
 
   public void run() {
-//    this.generateTestCaseFor(target);
-//    System.out.println(this.population.get(0).toString());
-//    this.executeTestCases(target);
-    EMConstants.MAX_ITERATIONS = 5;
-    for (int i = 1; i <= EMConstants.MAX_ITERATIONS; i++) {
-      this.generateTestCaseFor(target); // Todo read this function
-      System.out.println(testCase);
-      this.executeTestCases(this.target); // Todo read this function
+    System.out.println("---Mutant "
+            + target.getMutantNumber()
+            + target.getMutationOperator()
+            + "---");
+    System.out.println();
 
+    for (int i = 1; i <= 20; i++) {
+      this.generateTestCaseFor(target); // Todo read this function
+      this.executeTestCases(this.target); // Todo read this function
       this.evaluateTestCases(target);
       if (target.getAchieved()) {
         EMConstants.ACHIEVED_TARGETS.add(target);
         EMConstants.EFFECTIVE_TESTCASES.add(target.getTestCase());
-        System.out.println("Kill 1 mutant");
         break;
       }
     }
   }
-
 
   public void generateTestCaseFor(Target target) {
 
@@ -134,7 +129,7 @@ public class MyAlgorithm {
       int methodCallSequenceCount =
               (int) (Math.random() * EMConstants.METHOD_CLASS_SEQUENCE_COUNT);
       if (methodCallSequenceCount <= 1) {
-        methodCallSequenceCount += 4;
+        methodCallSequenceCount += 3;
       }
       for (int m = 1; m <= methodCallSequenceCount; m++) {
         int methodNumber =
@@ -458,14 +453,12 @@ public class MyAlgorithm {
               + targetPath1 +
               "/*.java"
       );
-//      File d1Check = new File(targetPath1 + "/Driver0.class");
 
       Process compileOInstrumentProcess = Runtime.getRuntime().exec("javac -cp "
               + targetPath2 + " "
               + targetPath2
               + "/*.java"
       );
-//      File d2Check = new File(targetPath2 + "/Driver0.class");
       waitForExitValue(compileInstrumentProcess);
       waitForExitValue(compileOInstrumentProcess);
 
@@ -551,12 +544,10 @@ public class MyAlgorithm {
   }
 
   public void evaluateTestCases(Target target) {
+    System.out.println(testCase);
+    System.out.println();
     testCase.setWeight(0.0);
-
     try {
-//      FOR:
-//      for (int t = 0; t < this.population.size(); t++) {
-//        TestCase testCase = this.population.get(t);
       int t = 0;
       File fileI = new File(EMConstants.PROJECT_LOCATION
               + EMConstants.PROJECT_NAME
@@ -574,17 +565,20 @@ public class MyAlgorithm {
               + "Otrace.txt");
 
       if (fileI.exists() && fileO.exists()) {
+
         LineNumberReader lnrI = new LineNumberReader(new FileReader(fileI));
         LineNumberReader lnrO = new LineNumberReader(new FileReader(fileO));
         String lineI = lnrI.readLine();
         String lineO = lnrO.readLine();
         if (lineI != null) {
+
           do {
             if (lineI.startsWith("R: ")) {
               break;
             }
             lineI = lnrI.readLine();
           } while (lineI != null && !lineI.startsWith("R:"));
+
           if (lineI == null) {
             testCase.setWeight(-10.0);
           } else if (lineI.equals("R: 0.0 0 0.0")) {
@@ -593,18 +587,21 @@ public class MyAlgorithm {
             testCase.setLocalFitness(0.0);
             testCase.setWeight(4.0);
             lineI = lnrI.readLine();
+
             do {
               if (lineI != null && lineI.startsWith("N: ")) {
                 break;
               }
               lineI = lnrI.readLine();
             } while (lineI != null && !lineI.startsWith("N: "));
+
             do {
               if (lineO != null && lineO.startsWith("N: ")) {
                 break;
-              } //END if STATEMENT
+              }
               lineO = lnrO.readLine();
             } while (lineO != null && !lineO.startsWith("N: "));
+
             if (lineI != null && lineO != null) {
               boolean isSufficient = false;
               StringTokenizer tokenI = new StringTokenizer(lineI, " ");
@@ -621,6 +618,7 @@ public class MyAlgorithm {
                   break;
                 }
               }
+
               if (isSufficient) {
                 lineI = lnrI.readLine();
                 do {
@@ -629,20 +627,23 @@ public class MyAlgorithm {
                   }
                   lineI = lnrI.readLine();
                 } while (lineI != null && !lineI.startsWith("S: "));
-                ArrayList<String> listI = new ArrayList<String>();
+
+                ArrayList<String> listI = new ArrayList<>();
                 while (lineI != null) {
                   if (!lineI.equals("")) {
                     listI.add(lineI);
-                  } //END if STATEMENT
+                  }
                   lineI = lnrI.readLine();
-                } //END while LOOP
+                }
                 lineO = lnrO.readLine();
+
                 do {
                   if (lineO != null && lineO.startsWith("S: ")) {
                     break;
                   }
                   lineO = lnrO.readLine();
                 } while (lineO != null && !lineO.startsWith("S: "));
+
                 ArrayList<String> listO = new ArrayList<>();
                 while (lineO != null) {
                   if (!lineO.equals("")) {
@@ -675,18 +676,19 @@ public class MyAlgorithm {
                         testCase.setStatus("Suspicious");
                         testCase.setWeight(testCase.getWeight() + 1.0);
                         target.setSuspicious(true);
-                      } //END if-else STATEMENT
+                        System.out.println("Suspicious TestCase");
+                      }
                     } else {
                       int suff_cost = 0;
                       if (listI.size() < listO.size()) {
-                        FORA:
+
                         for (int x = 0; x < listI.size(); x++) {
                           String pathI = (String) listI.get(x);
                           String pathO = (String) listO.get(x);
                           if (pathI.equals(pathO)) {
                             suff_cost++;
-                          } //END if STATEMENT
-                        } //END for LOOP
+                          }
+                        }
                       } else {
                         for (int x = 0; x < listO.size(); x++) {
                           String pathI = (String) listI.get(x);
@@ -700,14 +702,13 @@ public class MyAlgorithm {
                       testCase.setStatus("Suspicious");
                       testCase.setWeight(testCase.getWeight() + 1.0);
                       target.setSuspicious(true);
+                      System.out.println("Suspicious TestCase");
                     }
                     testCase.setWeight(testCase.getWeight()
                             - (testCase.getApproachLevel()
                             + testCase.getLocalFitness()
                             + testCase.getStateFitness())
                     );
-//                      EMuJava.jTextArea2.append("\nFITNESS: [(" + testCase.getStateFitness() + ", [" + testCase.getApproachLevel() + ", " + testCase.getLocalFitness() + "]) ; " + testCase.getNecessityCost() + "; (" + testCase.getSufficiencyCost() + ", " + testCase.getStatus() + ")]");
-//                      EMuJava.jTextArea2.append("\nWEIGHT: " + testCase.getWeight() + "\n\n");
                   } else {
                     testCase.setSufficiencyCost("0");
                     testCase.setWeight(testCase.getWeight() + 1.0);
@@ -715,26 +716,18 @@ public class MyAlgorithm {
                     target.setTestCase(testCase);
                     target.setAchieved(true);
                     target.setStatus("Killed");
-                    EMConstants.ACHIEVED_TARGETS.add(target);
-                    EMConstants.ALL_TARGETS.remove(target);
-                    EMConstants.EFFECTIVE_TESTCASES.add(testCase);
+                    //EMConstants.ALL_TARGETS.remove(target);
                     testCase.setWeight(testCase.getWeight()
                             - (testCase.getApproachLevel()
                             + testCase.getLocalFitness()
                             + testCase.getStateFitness())
                     );
-//                      EMuJava.jTextArea3.append("TARGET: " + target.getMutationOperator() + "-" + target.getMutantNumber() + ",\tITERATION: " + (EMConstants.ITERATIONS_PERFORMED + 1) + "\n");
-//                      EMuJava.jTextArea3.append(((TestCase) this.population.get(t)).toString() + "\n\n");
-//                      EMuJava.jTextArea2.append("\nFITNESS: [(" + testCase.getStateFitness() + ", [" + testCase.getApproachLevel() + ", " + testCase.getLocalFitness() + "]) ; " + testCase.getNecessityCost() + "; (" + testCase.getSufficiencyCost() + ", " + testCase.getStatus() + ")]");
-//                      EMuJava.jTextArea2.append("\nWEIGHT: " + testCase.getWeight() + "\n\n");
-//                      ProcessProgress.getProcessProgress().statusLabel.setText("Target has achieved!!!");
-//                      break FOR;
-                  } //END if-else STATEMENT
+                    System.out.println("Kill the target");
+                  }
                 } else {
-//                    EMuJava.jTextArea2.append("\nFITNESS: Cannot be Calculated!");
+                  System.out.println("Bad Test Case");
                   testCase.setWeight(-10.0);
-//                    EMuJava.jTextArea2.append("\nWEIGHT: -10.0\n\n");
-                } //END if-else STATEMENT
+                }
               } else {
                 testCase.setFitness(true);
                 lineI = lineI.substring(3);
@@ -746,10 +739,10 @@ public class MyAlgorithm {
                   double weightO = 0.0;
                   for (int i = 0; i < lineI.length(); i++) {
                     weightI += lineI.charAt(i);
-                  } //END for LOOP
+                  }
                   for (int o = 0; o < lineO.length(); o++) {
                     weightO += lineO.charAt(o);
-                  } //END for LOOP
+                  }
                   double necessity_cost = (weightI - weightO) / (weightI + weightO);
                   necessity_cost = Math.abs(necessity_cost);
                   String nc = necessity_cost + "";
@@ -757,40 +750,34 @@ public class MyAlgorithm {
                     testCase.setNecessityCost(nc.substring(0, 4));
                   } else {
                     testCase.setNecessityCost(nc);
-                  } //END if-else STATEMENT
-                } //END if-else STATEMENT
+                  }
+                }
                 testCase.setSufficiencyCost("c");
                 testCase.setStatus("Normal");
                 testCase.setWeight(testCase.getWeight() - (testCase.getApproachLevel() + testCase.getLocalFitness() + testCase.getStateFitness()));
-//                  EMuJava.jTextArea2.append("\nFITNESS: [(" + testCase.getStateFitness() + ", [" + testCase.getApproachLevel() + ", " + testCase.getLocalFitness() + "]) ; " + testCase.getNecessityCost() + "; (c, Normal)]");
-//                  EMuJava.jTextArea2.append("\nWEIGHT: " + testCase.getWeight() + "\n\n");
-              } //END if-else STATEMENT
+              }
             } else {
               testCase.setWeight(-10.0);
-//                EMuJava.jTextArea2.append("\nFITNESS: Cannot be Calculated!");
-//                EMuJava.jTextArea2.append("\nWEIGHT: -10.0\n\n");
-            } //END if-else STATEMENT
+            }
           } else {
             testCase.setFitness(true);
-//              EMuJava.jTextArea2.append("Test Case# " + (t + 1) + "\n");
-//              EMuJava.jTextArea2.append(((TestCase) this.population.get(t)).toString());
             StringTokenizer tokenizer = new StringTokenizer(lineI, " ");
             tokenizer.nextToken();
             String token = tokenizer.nextToken();
             testCase.setStateFitness(Double.parseDouble(token));
             if (token.equals("0.0")) {
               testCase.setWeight(testCase.getWeight() + 2.0);
-            } //END if STATEMENT
+            }
             token = tokenizer.nextToken();
             testCase.setApproachLevel(Integer.parseInt(token));
             if (token.equals("0")) {
               testCase.setWeight(testCase.getWeight() + 1.0);
-            } //END if STATEMENT
+            }
             token = tokenizer.nextToken();
             testCase.setLocalFitness(Double.parseDouble(token));
             if (token.equals("0.0")) {
               testCase.setWeight(testCase.getWeight() + 1.0);
-            } //END if STATEMENT
+            }
             testCase.setNecessityCost("c");
             testCase.setSufficiencyCost("c");
             testCase.setStatus("Normal");
@@ -799,31 +786,25 @@ public class MyAlgorithm {
                     + testCase.getLocalFitness()
                     + testCase.getStateFitness())
             );
-//              EMuJava.jTextArea2.append("\nFITNESS: [(" + testCase.getStateFitness() + ", [" + testCase.getApproachLevel() + ", " + testCase.getLocalFitness() + "]) ; c ; (c, Normal)]");
-//              EMuJava.jTextArea2.append("\nWEIGHT: " + testCase.getWeight() + "\n\n");
-          } //END if-else STATEMENT
+          }
         } else {
-//            EMuJava.jTextArea2.append("Test Case# " + (t + 1) + "\n");
-//            EMuJava.jTextArea2.append(((TestCase) this.population.get(t)).toString());
-//            EMuJava.jTextArea2.append("\nFITNESS: Cannot be Calculated!");
+          System.out.println("Bad Test Case");
           testCase.setWeight(-10.0);
-//            EMuJava.jTextArea2.append("\nWEIGHT: -10.0\n\n");
-        } //END if-else LOOP
+        }
       } else {
-//          EMuJava.jTextArea2.append("Test Case# " + (t + 1) + "\n");
-//          EMuJava.jTextArea2.append(((TestCase) this.population.get(t)).toString());
-//          EMuJava.jTextArea2.append("\nFITNESS: Cannot be Calculated!");
+        System.out.println("Trace file doesn't exist");
         testCase.setWeight(-10.0);
-//          EMuJava.jTextArea2.append("\nWEIGHT: -10.0\n\n");
       }
-
     } catch (Exception e) {
       e.printStackTrace();
-    } //END try-catch BLOCK
-    this.traceNumber += this.population.size();
+    }
+    this.traceNumber++;
 
     try {
-      File traceDir = new File(EMConstants.PROJECT_LOCATION + EMConstants.PROJECT_NAME + "/traces/");
+      File traceDir = new File(
+              EMConstants.PROJECT_LOCATION
+                      + EMConstants.PROJECT_NAME
+                      + "/traces/");
       File[] traceFiles = traceDir.listFiles();
       for (File traceFile : Objects.requireNonNull(traceFiles)) {
         if (traceFile.exists()) {

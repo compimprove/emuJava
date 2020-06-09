@@ -29,6 +29,7 @@ public class CAManager {
     System.out.println("___________________");
     System.out.println("Effective Test Cases: ");
     for (TestCase testCase : EMConstants.EFFECTIVE_TESTCASES) {
+      System.out.println();
       System.out.println(testCase.toString());
     }
   }

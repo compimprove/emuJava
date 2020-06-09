@@ -14,10 +14,10 @@ public class Main {
   public static final String PROJECT_NAME = "Test";
   public static final String PROJECT_LOCATION =
           "D:\\compi\\sources\\Java\\emuJava\\Location\\";
-  public static final String CLASS1_NAME = "Stack.java";
+  public static final String CLASS1_NAME = "ElectricHeater.java";
   public static final String ClASS1_SOURCE =
           "D:\\compi\\sources\\Java\\emuJava\\Programs\\" + CLASS1_NAME;
-  public static final String CLASS2_NAME = "ElectricHeater.java";
+  public static final String CLASS2_NAME = "ElectricCooler.java";
   public static final String ClASS2_SOURCE =
           "D:\\compi\\sources\\Java\\emuJava\\Programs\\" + CLASS2_NAME;
   public static final ArrayList<String> mutationOperators = new ArrayList<String>(
@@ -57,7 +57,7 @@ public class Main {
   }
 
   private static void generateTestCase() {
-    EMConstants.MAX_ITERATIONS = 1;
+    EMConstants.MAX_ITERATIONS = 5;
     CA_MANAGER.run();
   }
 
@@ -145,7 +145,14 @@ public class Main {
         }
       }
       EMConstants.removeTargetsInRandomTargets(failTargets);
+      System.out.println("--------------");
       System.out.println("All targets: " + EMConstants.getRandomTargets().size());
+      for (int i = 0; i < EMConstants.getRandomTargets().size(); i++) {
+        Target target = EMConstants.getRandomTargets().get(i);
+        System.out.print(i + 1);
+        System.out.print("-" + target.getMutantNumber() + target.getMutationOperator() + "     ");
+      }
+      System.out.println();
     } catch (Exception exception) {
       exception.printStackTrace();
     }

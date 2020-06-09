@@ -65,7 +65,7 @@ public class EMConstants {
 
   public static double OLD_POPULATION_RATE = 0.2;
 
-  public static int METHOD_CLASS_SEQUENCE_COUNT = 20;
+  public static int METHOD_CLASS_SEQUENCE_COUNT = 10;
 
   public static ArrayList<Target> getRandomTargets() {
     makeRandomTargets();
